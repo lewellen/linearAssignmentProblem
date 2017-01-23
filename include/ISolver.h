@@ -14,7 +14,7 @@ public:
 	ISolver();
 	virtual ~ISolver();
 
-	virtual list< pair<size_t, size_t> > operator() (CostMatrix& M) = 0;
+	virtual list<size_t> operator() (CostMatrix& M) = 0;
 };
 
 #endif

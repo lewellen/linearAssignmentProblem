@@ -15,7 +15,7 @@ public:
 	AlternativeMethodSolver();
 	~AlternativeMethodSolver();
 
-	list< pair<size_t, size_t> > operator() (CostMatrix& M); 
+	list<size_t> operator() (CostMatrix& M); 
 };
 
 #endif

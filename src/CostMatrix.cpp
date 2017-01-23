@@ -68,6 +68,10 @@ const double& CostMatrix::getEntry(size_t row, size_t col) const {
 	return m_matrix[row * m_numEntries + col];	
 }
 
+const size_t& CostMatrix::getNumEntries() const {
+	return m_numEntries;
+}
+
 void CostMatrix::eraseRow(size_t i) {
 	m_rows->erase(i);
 }

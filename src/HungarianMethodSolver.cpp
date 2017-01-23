@@ -19,8 +19,8 @@ HungarianMethodSolver::~HungarianMethodSolver() {
 
 }
 
-list< pair<size_t, size_t> > HungarianMethodSolver::operator() (CostMatrix& M) {
-	list< pair<size_t, size_t> > assignments;
+list<size_t> HungarianMethodSolver::operator() (CostMatrix& M) {
+	list<size_t> assignments;
 
 	cout << M << endl;
 

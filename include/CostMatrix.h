@@ -25,6 +25,8 @@ public:
 	double& getEntry(size_t row, size_t col);
 	const double& getEntry(size_t row, size_t col) const;
 
+	const size_t& getNumEntries() const;
+
 	void eraseRow(size_t i);
 	void eraseCol(size_t i);
 

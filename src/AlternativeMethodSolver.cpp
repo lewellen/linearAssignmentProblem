@@ -16,8 +16,8 @@ AlternativeMethodSolver::~AlternativeMethodSolver() {
 
 }
 
-list< pair<size_t, size_t> > AlternativeMethodSolver::operator() (CostMatrix& M) {
-	list< pair<size_t, size_t> > assignments;
+list<size_t> AlternativeMethodSolver::operator() (CostMatrix& M) {
+	list<size_t> assignments;
 
 	return assignments;
 }
