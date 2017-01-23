@@ -1,20 +1,20 @@
-#ifndef COSTMATRIX_H
-#define COSTMATRIX_H
+#ifndef ARRAY2DMASK_H
+#define ARRAY2DMASK_H
 
 #include <iostream>
 #include <utility>
 
-#include "ArrayView.h"
+#include "ArrayMask.h"
 
 using std::ostream;
 using std::pair;
 
-class CostMatrix {
+class Array2DMask {
 public:
-	typedef ArrayView<size_t>::iterator iterator;
+	typedef ArrayMask<size_t>::iterator iterator;
 	
-	CostMatrix(size_t numEntries);
-	~CostMatrix();
+	Array2DMask(size_t numEntries);
+	~Array2DMask();
 
 	iterator rowBegin();
 	iterator rowEnd();
@@ -33,18 +33,16 @@ public:
 	pair<double, size_t> getRowMin(size_t row);
 	pair<double, size_t> getColMin(size_t col);
 
-	friend ostream& operator<< (ostream& s, CostMatrix& M);
+	friend ostream& operator<< (ostream& s, Array2DMask& M);
 
 private:
 	size_t m_numEntries;
 
-	ArrayView<size_t>* m_rows;
-	ArrayView<size_t>* m_cols;
+	ArrayMask<size_t>* m_rows;
+	ArrayMask<size_t>* m_cols;
 	double* m_matrix;
 
-	ArrayView<size_t>* indexedView(size_t numEntries);
+	ArrayMask<size_t>* indexedMask(size_t numEntries);
 };
-
-
 
 #endif

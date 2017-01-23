@@ -3,21 +3,21 @@
 #include <limits>
 #include <utility>
 
-#include "ArrayView.h"
+#include "ArrayMask.h"
 
-#include "CostMatrix.h"
+#include "Array2DMask.h"
 
 using std::endl;
 using std::numeric_limits;
 using std::ostream;
 using std::pair;
 
-CostMatrix::CostMatrix(size_t numEntries) {
+Array2DMask::Array2DMask(size_t numEntries) {
 	assert(numEntries > 0);
 	m_numEntries = numEntries;
 		
-	m_rows = indexedView(m_numEntries);
-	m_cols = indexedView(m_numEntries);
+	m_rows = indexedMask(m_numEntries);
+	m_cols = indexedMask(m_numEntries);
 
 	m_matrix = new double[m_numEntries * m_numEntries];
 	for(size_t row = 0; row < m_numEntries; ++row) {
@@ -27,7 +27,7 @@ CostMatrix::CostMatrix(size_t numEntries) {
 	}
 }
 
-CostMatrix::~CostMatrix() {
+Array2DMask::~Array2DMask() {
 	m_numEntries = 0;
 
 	delete m_rows;
@@ -40,53 +40,53 @@ CostMatrix::~CostMatrix() {
 	m_matrix = NULL;
 }
 
-CostMatrix::iterator CostMatrix::rowBegin() {
+Array2DMask::iterator Array2DMask::rowBegin() {
 	return m_rows->begin();
 }
 
-CostMatrix::iterator CostMatrix::rowEnd() {
+Array2DMask::iterator Array2DMask::rowEnd() {
 	return m_rows->end();
 }
 
-CostMatrix::iterator CostMatrix::colBegin() {
+Array2DMask::iterator Array2DMask::colBegin() {
 	return m_cols->begin();
 }
 
-CostMatrix::iterator CostMatrix::colEnd() {
+Array2DMask::iterator Array2DMask::colEnd() {
 	return m_cols->end();
 }
 
-double& CostMatrix::getEntry(size_t row, size_t col) {
+double& Array2DMask::getEntry(size_t row, size_t col) {
 	assert(row < m_numEntries);
 	assert(col < m_numEntries);
 	return m_matrix[row * m_numEntries + col];
 }
 
-const double& CostMatrix::getEntry(size_t row, size_t col) const {
+const double& Array2DMask::getEntry(size_t row, size_t col) const {
 	assert(row < m_numEntries);
 	assert(col < m_numEntries);
 	return m_matrix[row * m_numEntries + col];	
 }
 
-const size_t& CostMatrix::getNumEntries() const {
+const size_t& Array2DMask::getNumEntries() const {
 	return m_numEntries;
 }
 
-void CostMatrix::eraseRow(size_t i) {
+void Array2DMask::eraseRow(size_t i) {
 	m_rows->erase(i);
 }
 
-void CostMatrix::eraseCol(size_t i) {
+void Array2DMask::eraseCol(size_t i) {
 	m_cols->erase(i);
 }	
 
-pair<double, size_t> CostMatrix::getRowMin(size_t row) {
+pair<double, size_t> Array2DMask::getRowMin(size_t row) {
 	assert(row < m_numEntries);
 
 	double minValue = +numeric_limits<double>::infinity();
 	size_t minCol = 0;
 
-	for(ArrayView<size_t>::iterator i = m_cols->begin(); i != m_cols->end(); ++i) {
+	for(ArrayMask<size_t>::iterator i = m_cols->begin(); i != m_cols->end(); ++i) {
 		double value = m_matrix[row * m_numEntries + *i];
 		if(value < minValue) {
 			minValue = value;
@@ -97,13 +97,13 @@ pair<double, size_t> CostMatrix::getRowMin(size_t row) {
 	return pair<double, size_t>(minValue, minCol);
 }
 
-pair<double, size_t> CostMatrix::getColMin(size_t col) {
+pair<double, size_t> Array2DMask::getColMin(size_t col) {
 	assert(col < m_numEntries);
 
 	double minValue = +numeric_limits<double>::infinity();
 	size_t minRow = 0;
 
-	for(ArrayView<size_t>::iterator i = m_rows->begin(); i != m_rows->end(); ++i) {
+	for(ArrayMask<size_t>::iterator i = m_rows->begin(); i != m_rows->end(); ++i) {
 		double value = m_matrix[(*i) * m_numEntries + col];
 		if(value < minValue) {
 			minValue = value;
@@ -114,9 +114,9 @@ pair<double, size_t> CostMatrix::getColMin(size_t col) {
 	return pair<double, size_t>(minValue, minRow);
 }
 
-ostream& operator<< (ostream& s, CostMatrix& M) {
-	for(CostMatrix::iterator row = M.rowBegin(); row != M.rowEnd(); ++row) {
-		for(CostMatrix::iterator col = M.colBegin(); col != M.colEnd(); ++col) {
+ostream& operator<< (ostream& s, Array2DMask& M) {
+	for(Array2DMask::iterator row = M.rowBegin(); row != M.rowEnd(); ++row) {
+		for(Array2DMask::iterator col = M.colBegin(); col != M.colEnd(); ++col) {
 			s << M.getEntry(*row, *col) << " ";
 		}
 		s << endl;
@@ -124,15 +124,15 @@ ostream& operator<< (ostream& s, CostMatrix& M) {
 	return s;
 }
 
-ArrayView<size_t>* CostMatrix::indexedView(size_t numEntries) {
-	ArrayView<size_t>* view = new ArrayView<size_t>(numEntries);
-	assert(view != NULL);
+ArrayMask<size_t>* Array2DMask::indexedMask(size_t numEntries) {
+	ArrayMask<size_t>* mask = new ArrayMask<size_t>(numEntries);
+	assert(mask != NULL);
 
 	size_t index = 0;
-	for(ArrayView<size_t>::iterator i = view->begin(); i != view->end(); ++i) {
+	for(ArrayMask<size_t>::iterator i = mask->begin(); i != mask->end(); ++i) {
 		*i = index;
 		++index;
 	}
 
-	return view;
+	return mask;
 }

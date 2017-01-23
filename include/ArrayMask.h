@@ -1,5 +1,5 @@
-#ifndef ARRAYVIEW_H
-#define ARRAYVIEW_H
+#ifndef ARRAYMASK_H
+#define ARRAYMASK_H
 
 #include <cassert>
 
@@ -7,11 +7,11 @@
 #include "NodeIterator.h"
 
 template <typename T>
-class ArrayView {
+class ArrayMask {
 public:
 	typedef NodeIterator<T> iterator;
 
-	ArrayView(size_t entries) {
+	ArrayMask(size_t entries) {
 		assert(entries > 0);
 
 		m_arraySize = entries;
@@ -34,7 +34,7 @@ public:
 		m_head = m_array[0];
 	}
 
-	~ArrayView() {
+	~ArrayMask() {
 		for(size_t i = 0; i < m_arraySize; ++i) {
 			delete m_array[i];
 			m_array[i] = NULL;

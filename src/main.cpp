@@ -4,7 +4,7 @@
 #include <map>
 #include <utility>
 
-#include "CostMatrix.h"
+#include "Array2DMask.h"
 #include "ISolver.h"
 #include "ISolverFactory.h"
 
@@ -15,12 +15,11 @@ using std::map;
 using std::pair;
 
 int main(int argc, char** argv) {
-	CostMatrix M(10);
+	Array2DMask M(10);
 
 	// Initialize random cost matrix
-	srand(time(NULL));
-	for(CostMatrix::iterator row = M.rowBegin(); row != M.rowEnd(); ++row) {
-		for(CostMatrix::iterator col = M.colBegin(); col != M.colEnd(); ++col) {
+	for(Array2DMask::iterator row = M.rowBegin(); row != M.rowEnd(); ++row) {
+		for(Array2DMask::iterator col = M.colBegin(); col != M.colEnd(); ++col) {
 			M.getEntry(*row, *col) = (rand() % 100) + 5;
 		}
 	}
@@ -37,11 +36,11 @@ int main(int argc, char** argv) {
 		++job;
 	}
 
-	for(CostMatrix::iterator i = M.rowBegin(); i != M.rowEnd(); ++i) {
+	for(Array2DMask::iterator i = M.rowBegin(); i != M.rowEnd(); ++i) {
 		size_t row = *i;
 		size_t assignedCol = jobsByWorker[row];
 
-		for(CostMatrix::iterator j = M.colBegin(); j != M.colEnd(); ++j) {
+		for(Array2DMask::iterator j = M.colBegin(); j != M.colEnd(); ++j) {
 			size_t col = *j;
 
 			if(col == assignedCol) {

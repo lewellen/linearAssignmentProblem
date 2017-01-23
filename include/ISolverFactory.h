@@ -12,6 +12,7 @@ public:
 	static const string SOLVER_HUNGARIAN;
 
 	static bool isValidName(const string& name);
+	static const string* getValidNames(size_t& numNamesOut);
 	static ISolver* make(const string& name);
 };
 

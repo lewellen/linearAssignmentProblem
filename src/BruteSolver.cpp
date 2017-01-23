@@ -2,7 +2,7 @@
 #include <list>
 #include <utility>
 
-#include "CostMatrix.h"
+#include "Array2DMask.h"
 #include "ISolver.h"
 #include "BruteSolver.h"
 
@@ -18,7 +18,7 @@ BruteSolver::~BruteSolver() {
 
 }
 
-list<size_t> BruteSolver::operator() (CostMatrix& M) {
+list<size_t> BruteSolver::operator() (Array2DMask& M) {
 	list<size_t> workers;
 	for(size_t i = 0; i < M.getNumEntries(); ++i) {
 		workers.push_back(i);
@@ -38,7 +38,7 @@ list<size_t> BruteSolver::operator() (CostMatrix& M) {
 
 void BruteSolver::permutation(
 	list<size_t>& A, list<size_t>& B, 
-	CostMatrix& M, double& minCost, list<size_t>& minAssign) {
+	Array2DMask& M, double& minCost, list<size_t>& minAssign) {
 
 	if(A.empty()) {
 		double cost = 0.0;

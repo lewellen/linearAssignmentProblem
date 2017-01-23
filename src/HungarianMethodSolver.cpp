@@ -2,7 +2,7 @@
 #include <iostream>
 #include <utility>
 
-#include "CostMatrix.h"
+#include "Array2DMask.h"
 #include "ISolver.h"
 #include "HungarianMethodSolver.h"
 
@@ -19,15 +19,15 @@ HungarianMethodSolver::~HungarianMethodSolver() {
 
 }
 
-list<size_t> HungarianMethodSolver::operator() (CostMatrix& M) {
+list<size_t> HungarianMethodSolver::operator() (Array2DMask& M) {
 	list<size_t> assignments;
 
 	cout << M << endl;
 
 	// Deduct row min from each row
-	for(CostMatrix::iterator row = M.rowBegin(); row != M.rowEnd(); ++row) {
+	for(Array2DMask::iterator row = M.rowBegin(); row != M.rowEnd(); ++row) {
 		pair<double, size_t> rowMin = M.getRowMin(*row);
-		for(CostMatrix::iterator col = M.colBegin(); col != M.colEnd(); ++col) {
+		for(Array2DMask::iterator col = M.colBegin(); col != M.colEnd(); ++col) {
 			M.getEntry(*row, *col) -= rowMin.first;
 		}
 	}
@@ -35,9 +35,9 @@ list<size_t> HungarianMethodSolver::operator() (CostMatrix& M) {
 	cout << M << endl;
 
 	// Deduct col min from each column
-	for(CostMatrix::iterator col = M.colBegin(); col != M.colEnd(); ++col) {
+	for(Array2DMask::iterator col = M.colBegin(); col != M.colEnd(); ++col) {
 		pair<double, size_t> colMin = M.getColMin(*col);
-		for(CostMatrix::iterator row = M.rowBegin(); row != M.rowEnd(); ++row) {
+		for(Array2DMask::iterator row = M.rowBegin(); row != M.rowEnd(); ++row) {
 			M.getEntry(*row, *col) -= colMin.first;
 		}
 	}

@@ -4,7 +4,7 @@
 #include <list>
 #include <utility>
 
-#include "CostMatrix.h"
+#include "Array2DMask.h"
 
 using std::list;
 using std::pair;
@@ -14,7 +14,16 @@ public:
 	ISolver();
 	virtual ~ISolver();
 
-	virtual list<size_t> operator() (CostMatrix& M) = 0;
+	/*
+	 * Finds the minimum cost for n workers to complete n tasks.
+	 *
+	 * @param M Each row is a worker, each column a task; Entry M[row, col]
+	 * represents cost of worker row performing task col.
+	 *
+	 * @returns Worker index assigned to list's index. (First entry 
+	 * corresponds to first task, second to second task, and so on.)
+	 */
+	virtual list<size_t> operator() (Array2DMask& M) = 0;
 };
 
 #endif

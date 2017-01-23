@@ -4,7 +4,7 @@
 #include <list>
 #include <utility>
 
-#include "CostMatrix.h"
+#include "Array2DMask.h"
 #include "ISolver.h"
 
 using std::list;
@@ -15,7 +15,7 @@ public:
 	AlternativeMethodSolver();
 	~AlternativeMethodSolver();
 
-	list<size_t> operator() (CostMatrix& M); 
+	list<size_t> operator() (Array2DMask& M); 
 };
 
 #endif

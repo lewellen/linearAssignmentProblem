@@ -18,6 +18,18 @@ bool ISolverFactory::isValidName(const string& name) {
 		(name == SOLVER_HUNGARIAN);
 }
 
+const string* ISolverFactory::getValidNames(size_t& numNames) {
+	static size_t s_numNames = 3;
+	static string s_names[] = {
+		SOLVER_ALTERNATIVE,
+		SOLVER_BRUTE,
+		SOLVER_HUNGARIAN
+	};
+
+	numNames = s_numNames;
+	return s_names;
+}
+
 ISolver* ISolverFactory::make(const string& name) {
 	assert(isValidName(name));
 
