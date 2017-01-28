@@ -1,6 +1,8 @@
+#include <cassert>
 #include <list>
 #include <utility>
 
+#include "Array2D.h"
 #include "Array2DMask.h"
 #include "ISolver.h"
 #include "AlternativeMethodSolver.h"
@@ -16,15 +18,14 @@ AlternativeMethodSolver::~AlternativeMethodSolver() {
 
 }
 
-list<size_t> AlternativeMethodSolver::operator() (Array2DMask& M) {
+list<size_t> AlternativeMethodSolver::operator() (const Array2D<double>& A) const {
+	assert(A.getNumRows() == A.getNumCols());
+	// http://shodhganga.inflibnet.ac.in/bitstream/10603/3970/10/10_chapter%205.pdf
+
 	list<size_t> assignments;
 
-	Array2DMask N(M.getNumEntries());
-	for(size_t i = 0; i < M.getNumEntries(); ++i) {
-		for(size_t j = 0; j < M.getNumEntries(); ++j) {
-			N.getEntry(i,j) = M.getEntry(i,j);
-		}
-	}
+	Array2D<double> B = A;
+	Array2DMask M(B.getNumRows(), B.getNumCols());
 
 	return assignments;
 }

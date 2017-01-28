@@ -4,7 +4,7 @@
 #include <list>
 #include <utility>
 
-#include "Array2DMask.h"
+#include "Array2D.h"
 #include "ISolver.h"
 
 using std::list;
@@ -15,7 +15,7 @@ public:
 	AlternativeMethodSolver();
 	~AlternativeMethodSolver();
 
-	list<size_t> operator() (Array2DMask& M); 
+	list<size_t> operator() (const Array2D<double>& M) const;
 };
 
 #endif

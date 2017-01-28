@@ -14,34 +14,22 @@ public:
 	typedef ArrayMask<size_t>::iterator iterator;
 	
 	Array2DMask(size_t numEntries);
+	Array2DMask(size_t numRows, size_t numCols);
+	Array2DMask(const Array2DMask& other);
 	~Array2DMask();
 
-	iterator rowBegin();
-	iterator rowEnd();
+	iterator begin(size_t dimension);
+	iterator end(size_t dimension);
 
-	iterator colBegin();
-	iterator colEnd();
+	void erase(size_t dimension, size_t i);
 
-	double& getEntry(size_t row, size_t col);
-	const double& getEntry(size_t row, size_t col) const;
-
-	const size_t& getNumEntries() const;
-
-	void eraseRow(size_t i);
-	void eraseCol(size_t i);
-
-	pair<double, size_t> getRowMin(size_t row);
-	pair<double, size_t> getColMin(size_t col);
-
-	friend ostream& operator<< (ostream& s, Array2DMask& M);
+	pair<double, size_t> getDimensionMin(size_t dimension, size_t row);
 
 private:
-	size_t m_numEntries;
-
 	ArrayMask<size_t>* m_rows;
 	ArrayMask<size_t>* m_cols;
-	double* m_matrix;
 
+	void initialize(size_t rows, size_t columns);	
 	ArrayMask<size_t>* indexedMask(size_t numEntries);
 };
 

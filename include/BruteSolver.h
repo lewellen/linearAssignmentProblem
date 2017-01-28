@@ -4,7 +4,7 @@
 #include <list>
 #include <utility>
 
-#include "Array2DMask.h"
+#include "Array2D.h"
 #include "ISolver.h"
 
 using std::list;
@@ -15,12 +15,12 @@ public:
 	BruteSolver();
 	~BruteSolver();
 
-	list<size_t> operator() (Array2DMask& M); 
+	list<size_t> operator() (const Array2D<double>& M) const; 
 
 private:
 	void permutation(
 		list<size_t>& A, list<size_t>& B, 
-		Array2DMask& M, double& minCost, list<size_t>& minAssign);
+		const Array2D<double>& M, double& minCost, list<size_t>& minAssign) const;
 };
 
 #endif

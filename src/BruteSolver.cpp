@@ -1,8 +1,9 @@
+#include <cassert>
 #include <limits>
 #include <list>
 #include <utility>
 
-#include "Array2DMask.h"
+#include "Array2D.h"
 #include "ISolver.h"
 #include "BruteSolver.h"
 
@@ -18,9 +19,11 @@ BruteSolver::~BruteSolver() {
 
 }
 
-list<size_t> BruteSolver::operator() (Array2DMask& M) {
+list<size_t> BruteSolver::operator() (const Array2D<double>& M) const {
+	assert(M.getNumRows() == M.getNumCols());
+
 	list<size_t> workers;
-	for(size_t i = 0; i < M.getNumEntries(); ++i) {
+	for(size_t i = 0; i < M.getNumCols(); ++i) {
 		workers.push_back(i);
 	}
 	
@@ -38,7 +41,7 @@ list<size_t> BruteSolver::operator() (Array2DMask& M) {
 
 void BruteSolver::permutation(
 	list<size_t>& A, list<size_t>& B, 
-	Array2DMask& M, double& minCost, list<size_t>& minAssign) {
+	const Array2D<double>& M, double& minCost, list<size_t>& minAssign) const {
 
 	if(A.empty()) {
 		double cost = 0.0;

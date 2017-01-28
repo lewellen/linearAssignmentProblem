@@ -47,20 +47,6 @@ public:
 		m_head = NULL;
 	}
 
-	T& operator [](size_t index) {
-		assert(index < m_arraySize);
-		Node<T>* node = m_array[index];
-		assert(node != NULL);
-		return node->value;
-	}
-
-	const T& operator[] (size_t index) const {
-		assert(index < m_arraySize);
-		Node<T>* node = m_array[index];
-		assert(node != NULL);
-		return node->value;
-	}
-
 	iterator begin() {
 		return iterator(m_head);
 	}

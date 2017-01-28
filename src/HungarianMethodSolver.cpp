@@ -1,8 +1,9 @@
+#include <cassert>
 #include <list>
 #include <iostream>
 #include <utility>
 
-#include "Array2DMask.h"
+#include "Array2D.h"
 #include "ISolver.h"
 #include "HungarianMethodSolver.h"
 
@@ -19,15 +20,19 @@ HungarianMethodSolver::~HungarianMethodSolver() {
 
 }
 
-list<size_t> HungarianMethodSolver::operator() (Array2DMask& M) {
+list<size_t> HungarianMethodSolver::operator() (const Array2D<double>& A) const {
+	assert(A.getNumRows() == A.getNumCols());
+
 	list<size_t> assignments;
+
+/*	Array2D M = A; // explicit copy
 
 	cout << M << endl;
 
 	// Deduct row min from each row
-	for(Array2DMask::iterator row = M.rowBegin(); row != M.rowEnd(); ++row) {
+	for(Array2D::iterator row = M.rowBegin(); row != M.rowEnd(); ++row) {
 		pair<double, size_t> rowMin = M.getRowMin(*row);
-		for(Array2DMask::iterator col = M.colBegin(); col != M.colEnd(); ++col) {
+		for(Array2D::iterator col = M.colBegin(); col != M.colEnd(); ++col) {
 			M.getEntry(*row, *col) -= rowMin.first;
 		}
 	}
@@ -35,9 +40,9 @@ list<size_t> HungarianMethodSolver::operator() (Array2DMask& M) {
 	cout << M << endl;
 
 	// Deduct col min from each column
-	for(Array2DMask::iterator col = M.colBegin(); col != M.colEnd(); ++col) {
+	for(Array2D::iterator col = M.colBegin(); col != M.colEnd(); ++col) {
 		pair<double, size_t> colMin = M.getColMin(*col);
-		for(Array2DMask::iterator row = M.rowBegin(); row != M.rowEnd(); ++row) {
+		for(Array2D::iterator row = M.rowBegin(); row != M.rowEnd(); ++row) {
 			M.getEntry(*row, *col) -= colMin.first;
 		}
 	}
@@ -51,7 +56,7 @@ list<size_t> HungarianMethodSolver::operator() (Array2DMask& M) {
 	// Find the smallest entry not covered by any line. Subtract value from each row 
 	// that is not crossed out; then add it to each column that *IS* crossed out.
 	// go back to (draw min num lines through all zeros step.)
-
+*/
 	return assignments;
 }
 

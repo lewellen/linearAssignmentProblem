@@ -4,7 +4,7 @@
 #include <list>
 #include <utility>
 
-#include "Array2DMask.h"
+#include "Array2D.h"
 
 using std::list;
 using std::pair;
@@ -23,7 +23,7 @@ public:
 	 * @returns Worker index assigned to list's index. (First entry 
 	 * corresponds to first task, second to second task, and so on.)
 	 */
-	virtual list<size_t> operator() (Array2DMask& M) = 0;
+	virtual list<size_t> operator() (const Array2D<double>& M) const = 0;
 };
 
 #endif
