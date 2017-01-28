@@ -21,8 +21,8 @@ Array2DMask::Array2DMask(size_t numRows, size_t numCols) {
 }
 
 Array2DMask::Array2DMask(const Array2DMask& other) {
-	m_rows = new ArrayMask<size_t>(*other.m_rows);
-	m_cols = new ArrayMask<size_t>(*other.m_cols);
+	m_rows = new ArrayMask(*other.m_rows);
+	m_cols = new ArrayMask(*other.m_cols);
 }
 
 Array2DMask::~Array2DMask() {
@@ -68,6 +68,6 @@ void Array2DMask::initialize(size_t numRows, size_t numCols) {
 	assert(numRows > 0);
 	assert(numCols > 0);
 
-	m_rows = new ArrayMask<size_t>(numRows);
-	m_cols = new ArrayMask<size_t>(numCols);
+	m_rows = new ArrayMask(numRows);
+	m_cols = new ArrayMask(numCols);
 }

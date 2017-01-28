@@ -11,7 +11,7 @@ using std::pair;
 
 class Array2DMask {
 public:
-	typedef ArrayMask<size_t>::iterator iterator;
+	typedef ArrayMask::iterator iterator;
 	
 	Array2DMask(size_t numEntries);
 	Array2DMask(size_t numRows, size_t numCols);
@@ -26,11 +26,10 @@ public:
 	pair<double, size_t> getDimensionMin(size_t dimension, size_t row);
 
 private:
-	ArrayMask<size_t>* m_rows;
-	ArrayMask<size_t>* m_cols;
+	ArrayMask* m_rows;
+	ArrayMask* m_cols;
 
 	void initialize(size_t rows, size_t columns);	
-	ArrayMask<size_t>* indexedMask(size_t numEntries);
 };
 
 #endif
