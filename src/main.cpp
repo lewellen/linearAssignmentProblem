@@ -1,7 +1,6 @@
 #include <cstdlib>
 #include <iostream>
 #include <list>
-#include <map>
 #include <utility>
 
 #include "Array2D.h"
@@ -11,7 +10,6 @@
 using std::cout;
 using std::endl;
 using std::list;
-using std::map;
 using std::pair;
 
 int main(int argc, char** argv) {
@@ -28,15 +26,8 @@ int main(int argc, char** argv) {
 
 	ISolver* solver = ISolverFactory::make(ISolverFactory::SOLVER_BRUTE);
 	assert(solver != NULL);
-	list<size_t> assignments = (*solver)(M);
-	delete solver;
-
-	map<size_t, size_t> jobsByWorker;
-	size_t job = 0;
-	for(list<size_t>::const_iterator i = assignments.begin(); i != assignments.end(); ++i) {
-		jobsByWorker[*i] = job;
-		++job;
-	}
+	vector<size_t> jobsByWorker = (*solver)(M);
+	delete solver;	
 
 	for(size_t row = 0; row < M.getNumRows(); ++row) {
 		size_t assignedCol = jobsByWorker[row];
@@ -64,8 +55,8 @@ int main(int argc, char** argv) {
 
 	double cost = 0.0;
 
-	for(map<size_t, size_t>::const_iterator i = jobsByWorker.begin(); i != jobsByWorker.end(); ++i) {
-		cost += M.getEntry( (*i).first, (*i).second );
+	for(size_t worker = 0; worker < jobsByWorker.size(); ++worker) {
+		cost += M.getEntry( worker, jobsByWorker[worker] );
 	}
 
 	cout << endl << "Cost: " << cost << endl;

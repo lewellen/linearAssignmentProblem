@@ -1,13 +1,15 @@
+#include <algorithm>
 #include <cassert>
 #include <limits>
-#include <list>
+#include <vector>
 #include <utility>
 
 #include "Array2D.h"
 #include "ISolver.h"
 #include "BruteSolver.h"
 
-using std::list;
+using std::swap;
+using std::vector;
 using std::numeric_limits;
 using std::pair;
 
@@ -19,50 +21,52 @@ BruteSolver::~BruteSolver() {
 
 }
 
-list<size_t> BruteSolver::operator() (const Array2D<double>& M) const {
+vector<size_t> BruteSolver::operator() (const Array2D<double>& M) const {
 	assert(M.getNumRows() == M.getNumCols());
 
-	list<size_t> workers;
-	for(size_t i = 0; i < M.getNumCols(); ++i) {
-		workers.push_back(i);
+	vector<size_t> workers(M.getNumRows());	
+	for(size_t i = 0; i < workers.size(); ++i) {
+		workers[i] = i;
 	}
-	
-	list<size_t> workingList;
 
 	double minCost = numeric_limits<double>::infinity();
-	list<size_t> minAssign;
+	vector<size_t> minAssign;
 
-	permutation(workers, workingList, M, minCost, minAssign);
-
-	workers.clear();
+	permutation(workers, workers.size(), M, minCost, minAssign);
 
 	return minAssign;
 }
 
 void BruteSolver::permutation(
-	list<size_t>& A, list<size_t>& B, 
-	const Array2D<double>& M, double& minCost, list<size_t>& minAssign) const {
+	vector<size_t>& A, size_t n,
+	const Array2D<double>& M, double& minCost, vector<size_t>& minAssign) const {
 
-	if(A.empty()) {
+	// Decided to use Heap's algorithm instead of mine (mine used two linked 
+	// lists representing unused objects, the other a permutation being built
+	// by the call stack; Heap's uses half the storage and vectors are 
+	// contiguous - hence better cache performance - so more preferrable.)
+
+	if( n == 1 ) {
 		double cost = 0.0;
-		size_t job = 0;
-		for(list<size_t>::iterator i = B.begin(); i != B.end(); ++i) {
-			cost += M.getEntry(*i, job++);
+		for(size_t i = 0; i < A.size(); ++i) {
+			cost += M.getEntry(i, A[i]);
 		}
 
-		if(cost < minCost) {
+		if(minCost > cost) {
 			minCost = cost;
-			minAssign = B;
+			minAssign = A;
 		}
-		return;
-	}
-
-	for(list<size_t>::iterator i = A.begin(); i != A.end(); ++i) {
-		size_t a = *i;
-		i = A.erase(i);
-		B.push_back(a);
-		permutation(A, B, M, minCost, minAssign);
-		B.erase(--B.end());
-		i = A.insert(i, a);
+	} else {
+		if(n % 2 == 0) {
+			for(size_t i = 0; i < n; ++i) {
+				permutation(A, n - 1, M, minCost, minAssign);
+				swap(A[i], A[n-1]);
+			}
+		} else {
+			for(size_t i = 0; i < n; ++i) {
+				permutation(A, n - 1, M, minCost, minAssign);
+				swap(A[0], A[n-1]);
+			}
+		}
 	}
 }

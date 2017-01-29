@@ -1,12 +1,12 @@
 #ifndef ISOLVER_H
 #define ISOLVER_H
 
-#include <list>
+#include <vector>
 #include <utility>
 
 #include "Array2D.h"
 
-using std::list;
+using std::vector;
 using std::pair;
 
 class ISolver {
@@ -20,10 +20,9 @@ public:
 	 * @param M Each row is a worker, each column a task; Entry M[row, col]
 	 * represents cost of worker row performing task col.
 	 *
-	 * @returns Worker index assigned to list's index. (First entry 
-	 * corresponds to first task, second to second task, and so on.)
+	 * @returns Vector of jobs by workers; v[ worker ] = job.
 	 */
-	virtual list<size_t> operator() (const Array2D<double>& M) const = 0;
+	virtual vector<size_t> operator() (const Array2D<double>& M) const = 0;
 };
 
 #endif

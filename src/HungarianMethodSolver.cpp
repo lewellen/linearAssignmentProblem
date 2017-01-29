@@ -1,5 +1,5 @@
 #include <cassert>
-#include <list>
+#include <vector>
 #include <iostream>
 #include <utility>
 
@@ -9,7 +9,7 @@
 
 using std::cout;
 using std::endl;
-using std::list;
+using std::vector;
 using std::pair;
 
 HungarianMethodSolver::HungarianMethodSolver() {
@@ -20,10 +20,10 @@ HungarianMethodSolver::~HungarianMethodSolver() {
 
 }
 
-list<size_t> HungarianMethodSolver::operator() (const Array2D<double>& A) const {
+vector<size_t> HungarianMethodSolver::operator() (const Array2D<double>& A) const {
 	assert(A.getNumRows() == A.getNumCols());
 
-	list<size_t> assignments;
+	vector<size_t> assignments;
 
 /*	Array2D M = A; // explicit copy
 
