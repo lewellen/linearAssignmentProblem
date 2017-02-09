@@ -23,8 +23,6 @@ public:
 
 	void erase(size_t dimension, size_t i);
 
-	pair<double, size_t> getDimensionMin(size_t dimension, size_t row);
-
 private:
 	ArrayMask* m_rows;
 	ArrayMask* m_cols;

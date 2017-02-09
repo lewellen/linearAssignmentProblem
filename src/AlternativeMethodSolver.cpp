@@ -1,4 +1,7 @@
 #include <cassert>
+#include <limits>
+#include <map>
+#include <set>
 #include <utility>
 #include <vector>
 
@@ -7,7 +10,10 @@
 #include "ISolver.h"
 #include "AlternativeMethodSolver.h"
 
+using std::map;
+using std::numeric_limits;
 using std::pair;
+using std::set;
 using std::vector;
 
 AlternativeMethodSolver::AlternativeMethodSolver() {
@@ -23,7 +29,7 @@ vector<size_t> AlternativeMethodSolver::operator() (const Array2D<double>& A) co
 	// http://shodhganga.inflibnet.ac.in/bitstream/10603/3970/10/10_chapter%205.pdf
 
 	vector<size_t> assignments(A.getNumRows());
-/*
+
 
 	Array2D<double> B = A;
 	Array2DMask M(B.getNumRows(), B.getNumCols());
@@ -68,7 +74,7 @@ vector<size_t> AlternativeMethodSolver::operator() (const Array2D<double>& A) co
 			workerByJob.erase(job);
 		}
 	}
-*/
+
 	return assignments;
 }
 

@@ -30,7 +30,7 @@ vector<size_t> BruteSolver::operator() (const Array2D<double>& M) const {
 	}
 
 	double minCost = numeric_limits<double>::infinity();
-	vector<size_t> minAssign;
+	vector<size_t> minAssign(M.getNumRows());
 
 	permutation(workers, workers.size(), M, minCost, minAssign);
 
