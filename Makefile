@@ -1,32 +1,34 @@
-# Define a variable of all the .cpp files so that we don't have to modify this
-# file every time a new file is added.
-#
-# Works by using the wildcard function to find all *.cpp files in the src
-# directory, and then the patsubst function replaces every src/%.cpp with 
-# obj/%.o to produce the desired list of required objects.
-#
-# www.gnu.org/software/make/manual/make.html#Wildcard-Function
-objects = $(patsubst src/%.cpp, obj/%.o, $(wildcard src/*.cpp))
+libObjs = $(patsubst lib/%.cpp, obj/lib/%.o, $(wildcard lib/*.cpp))
+bins = $(patsubst src/%.cpp, bin/%, $(wildcard src/*.cpp))
 
-all: clean project
+cppTool = g++
+cppFlags = -g -Wall -Wno-unused-variable -Wno-narrowing -Wno-sign-compare 
 
-project: objDir binDir $(objects)
-	g++ -Wall $(objects) -o bin/project 
+all: $(bins)
 
-# Define a single rule for building objects so that the file doesn't need to be
-# updated every single time a new class is added.
-#
-# Implicit variables $< = src/%.cpp and $@ = obj/%.o
-#
-# www.gnu.org/software/make/manual/make.html#Pattern-Examples
-obj/%.o: src/%.cpp
-	g++ -I./include -g -Wall -Wno-unused-variable -Wno-narrowing -Wno-sign-compare -c $< -o $@
+bin/%: obj/src/%.o obj/lib.o bin
+	$(cppTool) $(cppFlaggs) obj/lib.o $< -o $@
 
-objDir:
-	mkdir -p ./obj
-
-binDir:
+bin:
 	mkdir -p ./bin
+
+obj/lib.o: $(libObjs)
+	ld -r $(libObjs) -o obj/lib.o
+
+obj/src/%.o: src/%.cpp obj/src
+	$(cppTool) $(cppFlags) -I./include -c $< -o $@
+
+obj/lib/%.o: lib/%.cpp obj/lib
+	$(cppTool) $(cppFlags) -I./include -c $< -o $@
+
+obj/src: obj
+	mkdir -p ./obj/src
+
+obj/lib: obj
+	mkdir -p ./obj/lib
+
+obj:
+	mkdir -p ./obj
 
 clean:
 	rm -rf obj

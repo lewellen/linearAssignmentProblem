@@ -38,12 +38,10 @@ vector<size_t> HungarianMethodSolver::operator() (const Array2D<double>& A) cons
 		// Deduct row min from each row
 		for(Array2DMask::iterator row = M.begin(0); row != M.end(0); ++row) {
 			double minValue = numeric_limits<double>::infinity();
-			size_t minIndex = 0;
 			for(Array2DMask::iterator col = M.begin(1); col != M.end(1); ++col) {
 				double value = B.getEntry( *row, *col );
 				if(minValue > value) {
 					minValue = value;
-					minIndex = *col;
 				}
 			}
 
@@ -57,12 +55,10 @@ vector<size_t> HungarianMethodSolver::operator() (const Array2D<double>& A) cons
 		// Deduct col min from each column
 		for(Array2DMask::iterator col = M.begin(1); col != M.end(1); ++col) {
 			double minValue = numeric_limits<double>::infinity();
-			size_t minIndex = 0;
 			for(Array2DMask::iterator row = M.begin(0); row != M.end(0); ++row) { 
 				double value = B.getEntry(*row, *col);
 				if(minValue > value) {
 					minValue = value;
-					minIndex = *row;
 				}
 			}
 
