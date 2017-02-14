@@ -1,0 +1,14 @@
+set xlabel 'Workers/Tasks, N'
+set ylabel 'Elapsed time (ms)'
+
+set logscale y
+
+set key off
+
+set terminal png size 800,600
+
+set output 'bin/runtime.png'
+
+plot 'obj/runtime.dat' using 1:2:xtic(1) with boxes
+
+set output

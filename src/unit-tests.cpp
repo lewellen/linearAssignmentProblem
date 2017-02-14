@@ -5,13 +5,21 @@
 #include "ISolver.h"
 #include "ISolverFactory.h"
 
+using std::cout;
+using std::endl;
+
 #define cout cout << __FILE__ << ":" << __LINE__ << "\t"
 
-#define ASSERT_EQUALS(x, y) if(x != y) { std::cout << #x << " != " << #y << "\t(" << x << " != " << y << ")" << std::endl; return; }
+#define ASSERT_EQUALS(x, y) if(x != y) { cout << #x << " != " << #y << "\t(" << x << " != " << y << ")" << endl; return false; }
+
+#define FAIL cout << "FAIL\t" << __FUNCTION__ << endl;
+#define PASS cout << "PASS\t" << __FUNCTION__ << endl;
+
+#define RUN(x) if(x) { PASS; } else { FAIL; }
 
 typedef Array2D<double> CostMatrix;
 
-void testSolve(const CostMatrix& M, const vector<size_t>& expected, const string& solverName) {
+bool testSolve(const CostMatrix& M, const vector<size_t>& expected, const string& solverName) {
 	ISolver* solver = ISolverFactory::make(solverName);
 	vector<size_t> actual = (*solver)(M);
 	delete solver;
@@ -20,18 +28,11 @@ void testSolve(const CostMatrix& M, const vector<size_t>& expected, const string
 	for(size_t i = 0; i < expected.size(); ++i) {
 		ASSERT_EQUALS(expected[i], actual[i]);
 	}
+
+	return true;
 }
 
-void testSolve(const CostMatrix& M, const vector<size_t>& expected) {
-	size_t numNames;
-	const string* validNames = ISolverFactory::getValidNames(numNames);
-
-	for(size_t i = 0; i < numNames; ++i) {
-		testSolve(M, expected, validNames[i]);
-	}
-}
-
-void testEasy() {
+void testBruteMethodSolve() {
 	// http://www.hungarianalgorithm.com/examplehungarianalgorithm.php
 	CostMatrix M(4, 4);
 
@@ -61,11 +62,56 @@ void testEasy() {
 	expected[2] = 0;
 	expected[3] = 3;
 
-	testSolve(M, expected, ISolverFactory::SOLVER_BRUTE);
+	RUN( testSolve(M, expected, ISolverFactory::SOLVER_BRUTE) );
+}
+
+void testHungarianMethodSolveEasy() {
+	// Combinatorial Optimization pg. 252
+	CostMatrix M(5, 5);
+
+	M.getEntry(0, 0) = 7;
+	M.getEntry(0, 1) = 2;
+	M.getEntry(0, 2) = 1;
+	M.getEntry(0, 3) = 9;
+	M.getEntry(0, 4) = 4;
+
+	M.getEntry(1, 0) = 9;
+	M.getEntry(1, 1) = 6;
+	M.getEntry(1, 2) = 9;
+	M.getEntry(1, 3) = 5;
+	M.getEntry(1, 4) = 5;
+
+	M.getEntry(2, 0) = 3;
+	M.getEntry(2, 1) = 8;
+	M.getEntry(2, 2) = 3;
+	M.getEntry(2, 3) = 1;
+	M.getEntry(2, 4) = 8;
+
+	M.getEntry(3, 0) = 7;
+	M.getEntry(3, 1) = 9;
+	M.getEntry(3, 2) = 4;
+	M.getEntry(3, 3) = 2;
+	M.getEntry(3, 4) = 2;
+
+	M.getEntry(4, 0) = 8;
+	M.getEntry(4, 1) = 4;
+	M.getEntry(4, 2) = 7;
+	M.getEntry(4, 3) = 4;
+	M.getEntry(4, 4) = 8;
+
+	vector<size_t> expected(5);
+	expected[0] = 2;
+	expected[1] = 4;
+	expected[2] = 0;
+	expected[3] = 3;
+	expected[4] = 1;
+
+	RUN( testSolve(M, expected, ISolverFactory::SOLVER_HUNGARIAN) );
 }
 
 int main(int argc, char** argv) {
-	testEasy();
+	testBruteMethodSolve();
+	testHungarianMethodSolveEasy();
 
 	return EXIT_SUCCESS;
 }

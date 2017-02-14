@@ -2,9 +2,17 @@ libObjs = $(patsubst lib/%.cpp, obj/lib/%.o, $(wildcard lib/*.cpp))
 bins = $(patsubst src/%.cpp, bin/%, $(wildcard src/*.cpp))
 
 cppTool = g++
-cppFlags = -g -Wall -Wno-unused-variable -Wno-narrowing -Wno-sign-compare 
+cppFlags = -O3 -Wall -Wno-unused-variable -Wno-narrowing -Wno-sign-compare 
 
 all: $(bins)
+
+
+runtime: obj/runtime.dat src/runtime.gnu
+	gnuplot src/runtime.gnu
+
+obj/runtime.dat: bin/profiling
+	bin/profiling > obj/runtime.dat
+
 
 bin/%: obj/src/%.o obj/lib.o bin
 	$(cppTool) $(cppFlaggs) obj/lib.o $< -o $@
