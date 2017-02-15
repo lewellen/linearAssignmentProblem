@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "Array2D.h"
+#include "Assignment.h"
 #include "ISolver.h"
 #include "ISolverFactory.h"
 
@@ -19,9 +20,9 @@ using std::endl;
 
 typedef Array2D<double> CostMatrix;
 
-bool testSolve(const CostMatrix& M, const vector<size_t>& expected, const string& solverName) {
+bool testSolve(const CostMatrix& M, const Assignment& expected, const string& solverName) {
 	ISolver* solver = ISolverFactory::make(solverName);
-	vector<size_t> actual = (*solver)(M);
+	Assignment actual = (*solver)(M);
 	delete solver;
 
 	ASSERT_EQUALS(expected.size(), actual.size());
@@ -56,7 +57,7 @@ void testBruteMethodSolve() {
 	M.getEntry(3, 2) = 98;
 	M.getEntry(3, 3) = 23;
 	
-	vector<size_t> expected(4);
+	Assignment expected(4);
 	expected[0] = 2;
 	expected[1] = 1;
 	expected[2] = 0;
@@ -99,7 +100,7 @@ void testHungarianMethodSolveEasy() {
 	M.getEntry(4, 3) = 4;
 	M.getEntry(4, 4) = 8;
 
-	vector<size_t> expected(5);
+	Assignment expected(5);
 	expected[0] = 2;
 	expected[1] = 4;
 	expected[2] = 0;

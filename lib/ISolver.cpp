@@ -7,3 +7,4 @@ ISolver::ISolver() {
 ISolver::~ISolver() {
 
 }
+

@@ -1,14 +1,18 @@
 set xlabel 'Workers/Tasks, N'
-set ylabel 'Elapsed time (ms)'
 
+set ylabel 'Elapsed time (ms)'
 set logscale y
 
-set key off
+set key top left
+
+set style data histogram
+set style histogram cluster gap 1
+set style fill solid
+set boxwidth 0.9
 
 set terminal png size 800,600
-
 set output 'bin/runtime.png'
 
-plot 'obj/runtime.dat' using 1:2:xtic(1) with boxes
+plot for [i=2:4] 'obj/runtime.dat' using i:xtic(1)  title columnheader
 
 set output
