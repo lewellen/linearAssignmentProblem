@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "ISolver.h"
+
 using std::string;
 
 class ISolverFactory {
