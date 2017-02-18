@@ -3,7 +3,9 @@
 #include "Array2D.h"
 #include "TableInputFormat.h"
 
+using std::endl;
 using std::istream;
+using std::ostream;
 
 TableInputFormat::TableInputFormat() {
 
@@ -31,6 +33,19 @@ bool TableInputFormat::read(istream& s, Array2D<double>& M) const {
 		s >> value;
 
 		M.getEntry(row, col) = value;
+	}
+
+	return true;
+}
+
+bool TableInputFormat::write(ostream& s, Array2D<double>& M) const {
+	s << M.getNumRows() << endl;
+	s << M.getNumCols() << endl;
+
+	for(size_t row = 0; row < M.getNumRows(); ++row) {
+		for(size_t col = 0; col < M.getNumCols(); ++col) {
+			s << row << " " << col << " " << M.getEntry(row, col) << endl;
+		}
 	}
 
 	return true;

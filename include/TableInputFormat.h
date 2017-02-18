@@ -7,6 +7,7 @@
 #include "IInputFormat.h"
 
 using std::istream;
+using std::ostream;
 
 class TableInputFormat : public IInputFormat {
 public:
@@ -14,6 +15,7 @@ public:
 	virtual ~TableInputFormat();
 
 	bool read(istream& s, Array2D<double>& M) const;
+	bool write(ostream& s, Array2D<double>& M) const;
 };
 
 #endif

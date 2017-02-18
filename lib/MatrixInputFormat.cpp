@@ -3,7 +3,9 @@
 #include "Array2D.h"
 #include "MatrixInputFormat.h"
 
+using std::endl;
 using std::istream;
+using std::ostream;
 
 MatrixInputFormat::MatrixInputFormat() {
 
@@ -26,6 +28,20 @@ bool MatrixInputFormat::read(istream& s, Array2D<double>& M) const {
 			s >> value;
 			M.getEntry(row, col) = value;
 		}
+	}
+
+	return true;
+}
+
+bool MatrixInputFormat::write(ostream& s, Array2D<double>& M) const {
+	s << M.getNumRows() << endl;
+	s << M.getNumCols() << endl;
+
+	for(size_t row = 0; row < M.getNumRows(); ++row) {
+		for(size_t col = 0; col < M.getNumCols(); ++col) {
+			s << M.getEntry(row, col) << " ";
+		}
+		s << endl;
 	}
 
 	return true;
