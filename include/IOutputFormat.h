@@ -11,7 +11,7 @@ using std::ostream;
 class IOutputFormat {
 public:
 	IOutputFormat();
-	~IOutputFormat();
+	virtual ~IOutputFormat();
 
 	virtual bool write(ostream& s, const Array2D<double>& M, const Assignment& A) const = 0;
 };

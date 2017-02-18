@@ -3,10 +3,17 @@
 
 #include <cassert>
 #include <cstdlib>
+#include <cstring>
 
 template <typename T>
 class Array2D {
 public:
+	Array2D() {
+		m_array = NULL;
+		m_rows = 0;
+		m_cols = 0;
+	}
+
 	Array2D(size_t squareEdgeSize) {
 		initialize(squareEdgeSize, squareEdgeSize);
 	}
@@ -18,18 +25,22 @@ public:
 	Array2D(const Array2D<T>& other) {
 		initialize(other.m_rows, other.m_cols);
 
-		for(size_t i = 0; i < m_rows; ++i) {
-			for(size_t j = 0; j < m_cols; ++j) {
-				m_array[i * m_cols + j] = other.m_array[i * m_cols + j];
-			}
+		memcpy(m_array, other.m_array, other.m_rows * other.m_cols * sizeof(T));
+	}
+
+	Array2D<T>& operator= (const Array2D<T>& other) {
+		deinitialize();
+
+		if(other.m_rows != 0 && other.m_cols != 0) {
+			initialize(other.m_rows, other.m_cols);
+			memcpy(m_array, other.m_array, other.m_rows * other.m_cols * sizeof(T));
 		}
+
+		return *this;
 	}
 
 	~Array2D() {
-		m_rows = 0;
-		m_cols = 0;
-		delete[] m_array;
-		m_array = NULL;
+		deinitialize();
 	}
 
 	const size_t& getNumRows() const {
@@ -67,6 +78,15 @@ private:
 
 		m_array = new T[rows * cols];
 		assert(m_array != NULL);
+	}
+
+	void deinitialize() {
+		m_rows = 0;
+		m_cols = 0;
+		if(m_array != NULL) {
+			delete[] m_array;
+			m_array = NULL;
+		}
 	}
 };
 

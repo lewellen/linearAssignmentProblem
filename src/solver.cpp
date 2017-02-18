@@ -1,15 +1,25 @@
 #include <cstdlib>
+#include <fstream>
 #include <iostream>
 #include <limits>
 
 #include "Array2D.h"
 #include "Assignment.h"
+
 #include "ISolver.h"
 #include "ISolverFactory.h"
 
+#include "IInputFormat.h"
+#include "IInputFormatFactory.h"
+
+#include "IOutputFormat.h"
+#include "IOutputFormatFactory.h"
+
 using std::cout;
 using std::endl;
+using std::ifstream;
 using std::numeric_limits;
+using std::ofstream;
 
 typedef Array2D<double> CostMatrix;
 
@@ -74,6 +84,55 @@ public:
 	}
 
 	void printUsage() const {
+	}
+
+private:
+
+};
+*/
+
+class CLI {
+public:
+	CLI(int argc, char** argv) {
+		m_input = NULL;
+		m_inputFormat = NULL;
+		m_output = NULL;
+		m_outputFormat = NULL;
+		m_solver = NULL;
+		m_isMaxProblem = false;
+		m_isValid = false;
+	}
+
+	const char* getInput() const {
+		return m_input;
+	}
+
+	const char* getInputFormat() const {
+		return m_inputFormat;
+	}
+
+	const char* getOutput() const {
+		return m_output;
+	}
+
+	const char* getOutputFormat() const {
+		return m_outputFormat;
+	}
+
+	const char* getSolver() const {
+		return m_solver;
+	}
+
+	bool isMaxProblem() const {
+		return m_isMaxProblem;
+	}
+
+	bool isValid() const {
+		return m_isValid;
+	}
+
+	void printUsage() const {
+		/*
 		cout << "solver " << INPUT << " file " << OUTPUT << " file " << endl;
 		cout << "\t" << INPUT << " file" << endl;
 		cout << "\t" << INPUT_FORMAT << " [matrix] | array" << endl;
@@ -81,12 +140,18 @@ public:
 		cout << "\t" << SOLVER << " [hungarian] | brute | alternative" << endl;
 		cout << "\t" << OUTPUT << " file" << endl;
 		cout << "\t" << OUTPUT_FORMAT << " [matrix] | array" << endl;
+		*/
 	}
 
 private:
-
+	const char* m_input;
+	const char* m_inputFormat;
+	const char* m_output;
+	const char* m_outputFormat;
+	const char* m_solver;
+	bool m_isMaxProblem;
+	bool m_isValid;
 };
-*/
 
 void convertToMaximizationProblem(CostMatrix& M) {
 	double maxValue = -numeric_limits<double>::infinity();
@@ -108,6 +173,58 @@ void convertToMaximizationProblem(CostMatrix& M) {
 }
 
 int main(int argc, char** argv) {
+	CLI c(argc, argv);
+	if(!c.isValid()) {
+		c.printUsage();
+		return EXIT_FAILURE;
+	}
+
+	IInputFormat* inputFormat = IInputFormatFactory::make(c.getInputFormat());
+	assert(inputFormat != NULL);
+
+	ifstream inputFile(c.getInput(), ifstream::in);
+	assert(inputFile.is_open());
+
+	Array2D<double> M;
+	bool read = inputFormat->read(inputFile, M);
+
+	inputFile.close();
+
+	delete inputFormat;
+	inputFormat = NULL;
+
+	if(!read) {
+		return EXIT_FAILURE;
+	}
+
+	if(c.isMaxProblem()) {
+		convertToMaximizationProblem(M);
+	}
+
+	ISolver* solver = ISolverFactory::make(c.getSolver());
+	assert(solver != NULL);
+
+	Assignment A = (*solver)(M);
+
+	delete solver;
+	solver = NULL;
+	
+	IOutputFormat* outputFormat = IOutputFormatFactory::make(c.getOutputFormat());
+	assert(outputFormat != NULL);
+
+	ofstream outputFile(c.getOutput(), ofstream::out | ofstream::trunc);
+	assert(outputFile.is_open());
+
+	bool write = outputFormat->write(outputFile, M, A);
+
+	outputFile.close();
+
+	delete outputFormat;
+	outputFormat = NULL;
+
+	if(!write) {
+		return EXIT_FAILURE;
+	}
 
 	return EXIT_SUCCESS;
 }
