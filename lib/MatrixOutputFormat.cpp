@@ -2,20 +2,20 @@
 
 #include "Array2D.h"
 #include "Assignment.h"
-#include "MatrixSerializableFormat.h"
+#include "MatrixOutputFormat.h"
 
 using std::endl;
 using std::ostream;
 
-MatrixSerializableFormat::MatrixSerializableFormat() {
+MatrixOutputFormat::MatrixOutputFormat() {
 
 }
 
-MatrixSerializableFormat::~MatrixSerializableFormat() {
+MatrixOutputFormat::~MatrixOutputFormat() {
 
 }
 
-bool MatrixSerializableFormat::write(ostream& s, const Array2D<double>& M, const Assignment& A) const {
+bool MatrixOutputFormat::write(ostream& s, const Array2D<double>& M, const Assignment& A) const {
 	for(size_t row = 0; row < M.getNumRows(); ++row) {
 		size_t assignedCol = A[row];
 

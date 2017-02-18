@@ -4,7 +4,7 @@
 
 #include "Array2D.h"
 #include "Assignment.h"
-#include "MatrixSerializableFormat.h"
+#include "MatrixOutputFormat.h"
 
 using std::endl;
 using std::ostream;
@@ -44,7 +44,7 @@ double Assignment::cost(const Array2D<double>& M) const {
 }
 
 ostream& Assignment::display(ostream& s, const Array2D<double>& M) const {
-	MatrixSerializableFormat f;
+	MatrixOutputFormat f;
 	f.write(s, M, *this);
 	return s;
 }

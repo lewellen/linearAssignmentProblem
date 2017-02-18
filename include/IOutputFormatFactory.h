@@ -1,13 +1,13 @@
-#ifndef ISERIALIZABLEFORMATFACTORY_H
-#define ISERIALIZABLEFORMATFACTORY_H
+#ifndef IOUTPUTFORMATFACTORY_H
+#define IOUTPUTFORMATFACTORY_H
 
 #include <string>
 
-#include "ISerializableFormat.h"
+#include "IOutputFormat.h"
 
 using std::string;
 
-class ISerializableFormatFactory {
+class IOutputFormatFactory {
 public:
 	static const string S_FORMAT_MATRIX;
 	static const string S_FORMAT_TABLE;
@@ -15,7 +15,7 @@ public:
 
 	static bool isValidName(const string& name);
 	static const string* getValidNames(size_t& numNamesOut);
-	static ISerializableFormat* make(const string& name);
+	static IOutputFormat* make(const string& name);
 };
 
 #endif

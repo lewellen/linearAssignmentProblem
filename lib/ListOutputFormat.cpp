@@ -2,20 +2,20 @@
 
 #include "Array2D.h"
 #include "Assignment.h"
-#include "ListSerializableFormat.h"
+#include "ListOutputFormat.h"
 
 using std::endl;
 using std::ostream;
 
-ListSerializableFormat::ListSerializableFormat() {
+ListOutputFormat::ListOutputFormat() {
 
 }
 
-ListSerializableFormat::~ListSerializableFormat() {
+ListOutputFormat::~ListOutputFormat() {
 
 }
 
-bool ListSerializableFormat::write(ostream& s, const Array2D<double>& M, const Assignment& A) const {
+bool ListOutputFormat::write(ostream& s, const Array2D<double>& M, const Assignment& A) const {
 	for(size_t i = 0; i < A.size() - 1; ++i) {
 		s << A[i] << ", ";
 	}
