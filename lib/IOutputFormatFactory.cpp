@@ -10,23 +10,23 @@
 
 using std::string;
 
-const string IOutputFormatFactory::S_FORMAT_MATRIX = "MATRIX";
-const string IOutputFormatFactory::S_FORMAT_TABLE = "TABLE";
-const string IOutputFormatFactory::S_FORMAT_LIST = "LIST";
+const string IOutputFormatFactory::O_FORMAT_MATRIX = "MATRIX";
+const string IOutputFormatFactory::O_FORMAT_TABLE = "TABLE";
+const string IOutputFormatFactory::O_FORMAT_LIST = "LIST";
 
 bool IOutputFormatFactory::isValidName(const string& name) {
 	return 
-		(name == S_FORMAT_MATRIX) ||
-		(name == S_FORMAT_TABLE) ||
-		(name == S_FORMAT_LIST);
+		(name == O_FORMAT_MATRIX) ||
+		(name == O_FORMAT_TABLE) ||
+		(name == O_FORMAT_LIST);
 }
 
 const string* IOutputFormatFactory::getValidNames(size_t& numNames) {
 	static size_t s_numNames = 3;
 	static string s_names[] = {
-		S_FORMAT_MATRIX,
-		S_FORMAT_TABLE,
-		S_FORMAT_LIST
+		O_FORMAT_MATRIX,
+		O_FORMAT_TABLE,
+		O_FORMAT_LIST
 	};
 
 	numNames = s_numNames;
@@ -36,15 +36,15 @@ const string* IOutputFormatFactory::getValidNames(size_t& numNames) {
 IOutputFormat* IOutputFormatFactory::make(const string& name) {
 	assert(isValidName(name));
 
-	if(name == S_FORMAT_MATRIX) {
+	if(name == O_FORMAT_MATRIX) {
 		return new MatrixOutputFormat();
 	}
 
-	if(name == S_FORMAT_TABLE) {
+	if(name == O_FORMAT_TABLE) {
 		return new TableOutputFormat();
 	}
 
-	if(name == S_FORMAT_LIST) {
+	if(name == O_FORMAT_LIST) {
 		return new ListOutputFormat();
 	}
 

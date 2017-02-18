@@ -9,9 +9,9 @@ using std::string;
 
 class IOutputFormatFactory {
 public:
-	static const string S_FORMAT_MATRIX;
-	static const string S_FORMAT_TABLE;
-	static const string S_FORMAT_LIST;
+	static const string O_FORMAT_MATRIX;
+	static const string O_FORMAT_TABLE;
+	static const string O_FORMAT_LIST;
 
 	static bool isValidName(const string& name);
 	static const string* getValidNames(size_t& numNamesOut);
