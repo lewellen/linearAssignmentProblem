@@ -11,8 +11,8 @@ all: $(bins)
 runtime.png: obj/runtime.dat src/runtime.gpi
 	gnuplot src/runtime.gpi
 
-obj/runtime.dat: bin/profiling
-	bin/profiling > obj/runtime.dat
+obj/runtime.dat: bin/runtimeProfile
+	bin/runtimeProfile > obj/runtime.dat
 
 bin/%: obj/src/%.o obj/lib.o | bin
 	$(cppTool) $(cppFlaggs) obj/lib.o $< -o $@

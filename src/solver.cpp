@@ -6,14 +6,17 @@
 #include "Array2D.h"
 #include "Assignment.h"
 
-#include "ISolver.h"
-#include "ISolverFactory.h"
-
 #include "IInputFormat.h"
 #include "IInputFormatFactory.h"
 
 #include "IOutputFormat.h"
 #include "IOutputFormatFactory.h"
+
+#include "IObjective.h"
+#include "IObjectiveFactory.h"
+
+#include "ISolver.h"
+#include "ISolverFactory.h"
 
 using std::cout;
 using std::endl;
@@ -24,160 +27,195 @@ using std::ofstream;
 typedef Array2D<double> CostMatrix;
 
 #define FLAGS \
-	X(INPUT, "--input") \
-	X(INPUT_FORMAT, "--input-format") \
-	X(OBJECTIVE, "--objective") \
-	X(SOLVER, "--solver") \
-	X(OUTPUT, "--output") \
-	X(OUTPUT_FORMAT, "--output-format")
-
-/*
-class CLArguments {
-public:
-
-#define X(a, b) E_#a,
-	enum FlagEnum {	FLAGS, E_NONE };
-#undef X
-
-#define X(a, b) b,
-	const char*[] FlagNames { FLAGS }
-#undef X
-
-#define X(a, b) + 1
-	const size_t FlagCount = FLAGS ;
-#undef X
-
-	CLArguments(int argc, char** argv) {
-		char* const[FlagCount] options;
-		for(size_t i = 0; i < FlagCount; ++i) {
-			options[i] = NULL;
-		}
-
-		Flags f = E_NONE;
-		for(int i = 1; i < argc; ++i) {
-			size_t len = strlen(argv[i]);
-			if(len > 2 && argv[i][0] == '-' && argv[i][1] == '-') {
-
-				f = E_NONE;
-				for(size_t j = 0; j < FlagCount; ++j) {
-					if(strmp( argv[i], FlagNames[j] ) == 0) {
-						f = j;
-						found = true;
-						break;
-					}
-				}
-
-			} else {
-				if(f == E_NONE) {
-					// a ; with out --x
-					cout << "Unknown option: " << argv[i] << endl;
-					return EXIT_FAILURE;
-				} else if(options[f] == NULL) {
-					options[f] = argv[i];
-				} else {
-					// --x a b
-					cout << "Unknown option: " << argv[i] << endl;
-					return EXIT_FAILURE;
-				}
-			}
-		}
-	}
-
-	void printUsage() const {
-	}
-
-private:
-
-};
-*/
+	X(E_INPUT, "--input") \
+	X(E_INPUT_FORMAT, "--input-format") \
+	X(E_OBJECTIVE, "--objective") \
+	X(E_SOLVER, "--solver") \
+	X(E_OUTPUT, "--output") \
+	X(E_OUTPUT_FORMAT, "--output-format")
 
 class CLI {
 public:
-	CLI(int argc, char** argv) {
-		m_input = NULL;
-		m_inputFormat = NULL;
-		m_output = NULL;
-		m_outputFormat = NULL;
-		m_solver = NULL;
-		m_isMaxProblem = false;
-		m_isValid = false;
+
+#define X(a, b) , a
+	enum FlagEnum { 
+		E_NONE FLAGS
+	};
+#undef X
+
+	static const size_t FlagCount;
+	static const char* FlagNames[];
+
+	CLI() {
+		for(size_t i = 0; i < FlagCount; ++i) {
+			m_flags[i] = NULL;
+		}
+	}
+
+	bool load(int argc, char** argv) {
+		for(size_t i = 0; i < FlagCount; ++i) {
+			m_flags[i] = NULL;
+		}
+
+		FlagEnum f = E_NONE;
+		for(int i = 1; i < argc; ++i) {
+			size_t len = strlen(argv[i]);
+			if(len > 2 && argv[i][0] == '-' && argv[i][1] == '-') {
+				f = E_NONE;
+				for(int j = 1; j < FlagCount; ++j) {
+					if( strcmp( FlagNames[j], argv[i] ) == 0 ) {
+						f = (FlagEnum) j;
+						break;
+					}
+				}
+			} else {
+				if( (f == E_NONE) || (m_flags[f] != NULL) ) {
+					cout << f << endl;
+					cout << FlagNames[f] << "\t" << m_flags[f] << endl;
+					return false;
+				} else {
+					m_flags[f] = argv[i];
+				}
+			}
+		}
+
+		if( (m_flags[E_INPUT] == NULL) || (m_flags[E_OUTPUT] == NULL) ) {
+			cout << FlagNames[E_INPUT] << " and " << FlagNames[E_OUTPUT] << " are required." << endl;
+			return false;
+		}
+
+		if(m_flags[E_INPUT_FORMAT] == NULL) {
+			m_flags[E_INPUT_FORMAT] = IInputFormatFactory::I_FORMAT_MATRIX.c_str();
+		} else if (!IInputFormatFactory::isValidName(m_flags[E_INPUT_FORMAT]) ) {
+			cout << FlagNames[E_INPUT_FORMAT] << m_flags[E_INPUT_FORMAT] << " is not a valid option." << endl;
+			return false;
+		}
+
+		if(m_flags[E_OUTPUT_FORMAT] == NULL) {
+			m_flags[E_OUTPUT_FORMAT] = IOutputFormatFactory::O_FORMAT_MATRIX.c_str();
+		} else if (!IOutputFormatFactory::isValidName(m_flags[E_OUTPUT_FORMAT]) ) {
+			cout << FlagNames[E_OUTPUT_FORMAT] << m_flags[E_OUTPUT_FORMAT] << " is not a valid option." << endl;
+			return false;
+		}
+
+		if(m_flags[E_SOLVER] == NULL) {
+			m_flags[E_SOLVER] = ISolverFactory::SOLVER_BRUTE.c_str();
+		} else if (!ISolverFactory::isValidName(m_flags[E_SOLVER]) ) {
+			cout << FlagNames[E_SOLVER] << m_flags[E_SOLVER] << " is not a valid option." << endl;
+			return false;
+		}
+
+		if(m_flags[E_OBJECTIVE] == NULL) {
+			m_flags[E_OBJECTIVE] = IObjectiveFactory::OBJECTIVE_MINIMIZE.c_str();
+		} else if (!IObjectiveFactory::isValidName(m_flags[E_OBJECTIVE]) ) {
+			cout << FlagNames[E_OBJECTIVE] << m_flags[E_OBJECTIVE] << " is not a valid option." << endl;
+			return false;
+		}
+
+		return true;
 	}
 
 	const char* getInput() const {
-		return m_input;
+		return m_flags[E_INPUT];
 	}
 
 	const char* getInputFormat() const {
-		return m_inputFormat;
+		return m_flags[E_INPUT_FORMAT];
 	}
 
 	const char* getOutput() const {
-		return m_output;
+		return m_flags[E_OUTPUT];
 	}
 
 	const char* getOutputFormat() const {
-		return m_outputFormat;
+		return m_flags[E_OUTPUT_FORMAT];
 	}
 
 	const char* getSolver() const {
-		return m_solver;
+		return m_flags[E_SOLVER];
 	}
 
-	bool isMaxProblem() const {
-		return m_isMaxProblem;
+	const char* getObjective() const {
+		return m_flags[E_OBJECTIVE];
 	}
 
-	bool isValid() const {
-		return m_isValid;
+	void printConfiguration() const {
+		for(size_t i = 1; i < FlagCount; ++i) {
+			cout << FlagNames[i] << " = \"" << ( (m_flags[i] == NULL) ? "NULL" : m_flags[i] ) << "\"" << endl;
+		}
 	}
 
 	void printUsage() const {
-		/*
-		cout << "solver " << INPUT << " file " << OUTPUT << " file " << endl;
-		cout << "\t" << INPUT << " file" << endl;
-		cout << "\t" << INPUT_FORMAT << " [matrix] | array" << endl;
-		cout << "\t" << OBJECTIVE << " [minimize] | maximize"; << endl;
-		cout << "\t" << SOLVER << " [hungarian] | brute | alternative" << endl;
-		cout << "\t" << OUTPUT << " file" << endl;
-		cout << "\t" << OUTPUT_FORMAT << " [matrix] | array" << endl;
-		*/
+		cout << "solver " << FlagNames[E_INPUT] << " file " << FlagNames[E_OUTPUT] << " file " << endl;
+
+		cout << "\t" << FlagNames[E_INPUT] << " file" << endl;
+		cout << "\t" << FlagNames[E_INPUT_FORMAT] << " ";
+
+		size_t inputFormatCount;
+		const string* inputFormatNames = IInputFormatFactory::getValidNames(inputFormatCount);
+		for(size_t i = 0; i < inputFormatCount; ++i) {
+			cout << inputFormatNames[i];
+			if(i + 1 != inputFormatCount) {
+				cout << " | ";
+			}
+		}
+		cout << endl;
+
+
+		cout << "\t" << FlagNames[E_OUTPUT] << " file" << endl;
+		cout << "\t" << FlagNames[E_OUTPUT_FORMAT] << " ";
+
+		size_t outputFormatCount;
+		const string* outputFormatNames = IOutputFormatFactory::getValidNames(outputFormatCount);
+		for(size_t i = 0; i < outputFormatCount; ++i) {
+			cout << outputFormatNames[i];
+			if(i + 1 != outputFormatCount) {
+				cout << " | ";
+			}
+		}
+		cout << endl;
+		
+
+		cout << "\t" << FlagNames[E_OBJECTIVE] << " [minimize] | maximize" << endl;
+
+
+		size_t solverCount;
+		const string* solverNames = ISolverFactory::getValidNames(solverCount);
+		cout << "\t" << FlagNames[E_SOLVER] << " ";
+		for(size_t i = 0; i < solverCount; ++i) {
+			cout << solverNames[i];
+			if(i + 1 != solverCount) {
+				cout << " | ";
+			}
+		}
+		cout << endl;
 	}
 
 private:
-	const char* m_input;
-	const char* m_inputFormat;
-	const char* m_output;
-	const char* m_outputFormat;
-	const char* m_solver;
-	bool m_isMaxProblem;
-	bool m_isValid;
+	const char* m_flags[];
 };
 
-void convertToMaximizationProblem(CostMatrix& M) {
-	double maxValue = -numeric_limits<double>::infinity();
-	for(size_t row = 0; row < M.getNumRows(); ++row) {
-		for(size_t col = 0; col < M.getNumCols(); ++col) {
-			const double& value = M.getEntry(row, col);
-			if(maxValue < value) {
-				maxValue = value;
-			}
-		}
-	}
+#define X(a, b) + 1
+const size_t CLI::FlagCount = 1 FLAGS ;
+#undef X
 
-	for(size_t row = 0; row < M.getNumRows(); ++row) {
-		for(size_t col = 0; col < M.getNumCols(); ++col) {
-			double& value = M.getEntry(row, col);
-			value = maxValue - value;
-		}
-	}
-}
+#define X(a, b) , b
+const char* CLI::FlagNames[] = {
+	"" FLAGS
+};
+#undef X
+
 
 int main(int argc, char** argv) {
-	CLI c(argc, argv);
-	if(!c.isValid()) {
+	CLI c;
+
+	bool loaded = c.load(argc, argv);
+	c.printConfiguration();
+	if(!loaded) {
 		c.printUsage();
 		return EXIT_FAILURE;
 	}
+
 
 	IInputFormat* inputFormat = IInputFormatFactory::make(c.getInputFormat());
 	assert(inputFormat != NULL);
@@ -197,9 +235,14 @@ int main(int argc, char** argv) {
 		return EXIT_FAILURE;
 	}
 
-	if(c.isMaxProblem()) {
-		convertToMaximizationProblem(M);
-	}
+	IObjective* objective = IObjectiveFactory::make(c.getObjective());
+	assert(objective != NULL);
+
+	(*objective)(M);
+
+	delete objective;
+	objective = NULL;
+
 
 	ISolver* solver = ISolverFactory::make(c.getSolver());
 	assert(solver != NULL);

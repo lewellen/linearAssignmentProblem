@@ -1,10 +1,18 @@
 #include <cstdlib>
 #include <iostream>
 
+#include "Array.h"
+
 #include "Array2D.h"
 #include "Assignment.h"
 #include "ISolver.h"
 #include "ISolverFactory.h"
+
+#include "IInputFormat.h"
+#include "IInputFormatFactory.h"
+
+#include "IOutputFormat.h"
+#include "IOutputFormatFactory.h"
 
 using std::cout;
 using std::endl;
@@ -19,6 +27,20 @@ using std::endl;
 #define RUN(x) if(x) { PASS; } else { FAIL; }
 
 typedef Array2D<double> CostMatrix;
+
+bool testArray() {
+	Array<double> A(4);
+	for(size_t i = 0; i < A.getSize(); ++i) {
+		A[i] = i;
+	}
+
+	for(size_t i = 0; i < A.getSize(); ++i) {
+		ASSERT_EQUALS(A[i], i);
+	}
+
+	return true;
+}
+
 
 bool testSolve(const CostMatrix& M, const Assignment& expected, const string& solverName) {
 	ISolver* solver = ISolverFactory::make(solverName);
@@ -111,6 +133,8 @@ void testHungarianMethodSolveEasy() {
 }
 
 int main(int argc, char** argv) {
+	RUN( testArray() );
+
 	testBruteMethodSolve();
 	testHungarianMethodSolveEasy();
 
