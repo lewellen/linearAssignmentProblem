@@ -17,6 +17,7 @@ using std::list;
 using std::map;
 using std::pair;
 
+/*
 class Interval {
 public:
 	Interval() {
@@ -55,7 +56,7 @@ private:
 		m_lb = lb;
 		m_ub = ub;
 	}
-};
+};*/
 
 class SampledValue {
 public:
