@@ -44,69 +44,76 @@ public:
 #undef X
 
 	static const size_t FlagCount;
-	static const char* FlagNames[];
+	static const string FlagNames[];
 
 	CLI() {
+		m_flags = new string[FlagCount];
 		for(size_t i = 0; i < FlagCount; ++i) {
-			m_flags[i] = NULL;
+			m_flags[i].clear();
+			assert(m_flags[i].empty());
 		}
+	}
+
+	~CLI() {
+		delete[] m_flags;
+		m_flags = NULL;
 	}
 
 	bool load(int argc, char** argv) {
 		for(size_t i = 0; i < FlagCount; ++i) {
-			m_flags[i] = NULL;
+			m_flags[i].clear();
+			assert(m_flags[i].empty());
 		}
 
 		FlagEnum f = E_NONE;
 		for(int i = 1; i < argc; ++i) {
-			size_t len = strlen(argv[i]);
-			if(len > 2 && argv[i][0] == '-' && argv[i][1] == '-') {
+			string s = string(argv[i]);
+			if(s.length() > 2 && s[0] == '-' && s[1] == '-') {
 				f = E_NONE;
 				for(int j = 1; j < FlagCount; ++j) {
-					if( strcmp( FlagNames[j], argv[i] ) == 0 ) {
+					if( FlagNames[j] == s ) {
 						f = (FlagEnum) j;
 						break;
 					}
 				}
 			} else {
-				if( (f == E_NONE) || (m_flags[f] != NULL) ) {
-					cout << f << endl;
-					cout << FlagNames[f] << "\t" << m_flags[f] << endl;
+				if( (f == E_NONE) || !m_flags[f].empty() ) {
+					cout << "Unexpected second value for " << FlagNames[f] << endl;
 					return false;
 				} else {
-					m_flags[f] = argv[i];
+					m_flags[f] = s;
 				}
 			}
 		}
 
-		if( (m_flags[E_INPUT] == NULL) || (m_flags[E_OUTPUT] == NULL) ) {
+		if( m_flags[E_INPUT].empty() || m_flags[E_OUTPUT].empty() ) {
 			cout << FlagNames[E_INPUT] << " and " << FlagNames[E_OUTPUT] << " are required." << endl;
 			return false;
 		}
 
-		if(m_flags[E_INPUT_FORMAT] == NULL) {
-			m_flags[E_INPUT_FORMAT] = IInputFormatFactory::I_FORMAT_MATRIX.c_str();
+		if(m_flags[E_INPUT_FORMAT].empty()) {
+			m_flags[E_INPUT_FORMAT] = IInputFormatFactory::I_FORMAT_MATRIX;
 		} else if (!IInputFormatFactory::isValidName(m_flags[E_INPUT_FORMAT]) ) {
 			cout << FlagNames[E_INPUT_FORMAT] << m_flags[E_INPUT_FORMAT] << " is not a valid option." << endl;
 			return false;
 		}
 
-		if(m_flags[E_OUTPUT_FORMAT] == NULL) {
-			m_flags[E_OUTPUT_FORMAT] = IOutputFormatFactory::O_FORMAT_MATRIX.c_str();
+		if(m_flags[E_OUTPUT_FORMAT].empty()) {
+			m_flags[E_OUTPUT_FORMAT] = IOutputFormatFactory::O_FORMAT_MATRIX;
 		} else if (!IOutputFormatFactory::isValidName(m_flags[E_OUTPUT_FORMAT]) ) {
 			cout << FlagNames[E_OUTPUT_FORMAT] << m_flags[E_OUTPUT_FORMAT] << " is not a valid option." << endl;
 			return false;
 		}
 
-		if(m_flags[E_SOLVER] == NULL) {
-			m_flags[E_SOLVER] = ISolverFactory::SOLVER_BRUTE.c_str();
+		if(m_flags[E_SOLVER].empty()) {
+			m_flags[E_SOLVER] = ISolverFactory::SOLVER_BRUTE;
 		} else if (!ISolverFactory::isValidName(m_flags[E_SOLVER]) ) {
 			cout << FlagNames[E_SOLVER] << m_flags[E_SOLVER] << " is not a valid option." << endl;
 			return false;
 		}
 
-		if(m_flags[E_OBJECTIVE] == NULL) {
-			m_flags[E_OBJECTIVE] = IObjectiveFactory::OBJECTIVE_MINIMIZE.c_str();
+		if(m_flags[E_OBJECTIVE].empty()) {
+			m_flags[E_OBJECTIVE] = IObjectiveFactory::OBJECTIVE_MINIMIZE;
 		} else if (!IObjectiveFactory::isValidName(m_flags[E_OBJECTIVE]) ) {
 			cout << FlagNames[E_OBJECTIVE] << m_flags[E_OBJECTIVE] << " is not a valid option." << endl;
 			return false;
@@ -115,44 +122,46 @@ public:
 		return true;
 	}
 
-	const char* getInput() const {
+	const string& getInput() const {
 		return m_flags[E_INPUT];
 	}
 
-	const char* getInputFormat() const {
+	const string& getInputFormat() const {
 		return m_flags[E_INPUT_FORMAT];
 	}
 
-	const char* getOutput() const {
+	const string& getOutput() const {
 		return m_flags[E_OUTPUT];
 	}
 
-	const char* getOutputFormat() const {
+	const string& getOutputFormat() const {
 		return m_flags[E_OUTPUT_FORMAT];
 	}
 
-	const char* getSolver() const {
+	const string& getSolver() const {
 		return m_flags[E_SOLVER];
 	}
 
-	const char* getObjective() const {
+	const string& getObjective() const {
 		return m_flags[E_OBJECTIVE];
 	}
 
 	void printConfiguration() const {
 		for(size_t i = 1; i < FlagCount; ++i) {
-			cout << FlagNames[i] << " = \"" << ( (m_flags[i] == NULL) ? "NULL" : m_flags[i] ) << "\"" << endl;
+			cout << FlagNames[i] << " = \"" << ( m_flags[i].empty() ? "NULL" : m_flags[i] ) << "\"" << endl;
 		}
 	}
 
 	void printUsage() const {
 		cout << "solver " << FlagNames[E_INPUT] << " file " << FlagNames[E_OUTPUT] << " file " << endl;
 
+
 		cout << "\t" << FlagNames[E_INPUT] << " file" << endl;
-		cout << "\t" << FlagNames[E_INPUT_FORMAT] << " ";
+
 
 		size_t inputFormatCount;
 		const string* inputFormatNames = IInputFormatFactory::getValidNames(inputFormatCount);
+		cout << "\t" << FlagNames[E_INPUT_FORMAT] << " ";
 		for(size_t i = 0; i < inputFormatCount; ++i) {
 			cout << inputFormatNames[i];
 			if(i + 1 != inputFormatCount) {
@@ -163,10 +172,11 @@ public:
 
 
 		cout << "\t" << FlagNames[E_OUTPUT] << " file" << endl;
-		cout << "\t" << FlagNames[E_OUTPUT_FORMAT] << " ";
+
 
 		size_t outputFormatCount;
 		const string* outputFormatNames = IOutputFormatFactory::getValidNames(outputFormatCount);
+		cout << "\t" << FlagNames[E_OUTPUT_FORMAT] << " ";
 		for(size_t i = 0; i < outputFormatCount; ++i) {
 			cout << outputFormatNames[i];
 			if(i + 1 != outputFormatCount) {
@@ -174,9 +184,18 @@ public:
 			}
 		}
 		cout << endl;
-		
 
-		cout << "\t" << FlagNames[E_OBJECTIVE] << " [minimize] | maximize" << endl;
+		
+		size_t objectiveCount;
+		const string* objectiveNames = IObjectiveFactory::getValidNames(objectiveCount);
+		cout << "\t" << FlagNames[E_OBJECTIVE] << " ";
+		for(size_t i = 0; i < objectiveCount; ++i) {
+			cout << objectiveNames[i];
+			if(i + 1 != objectiveCount) {
+				cout << " | ";
+			}
+		}
+		cout << endl;
 
 
 		size_t solverCount;
@@ -192,7 +211,7 @@ public:
 	}
 
 private:
-	const char* m_flags[];
+	string* m_flags;
 };
 
 #define X(a, b) + 1
@@ -200,27 +219,23 @@ const size_t CLI::FlagCount = 1 FLAGS ;
 #undef X
 
 #define X(a, b) , b
-const char* CLI::FlagNames[] = {
-	"" FLAGS
-};
+const string CLI::FlagNames[] = { "" FLAGS };
 #undef X
-
 
 int main(int argc, char** argv) {
 	CLI c;
-
 	bool loaded = c.load(argc, argv);
 	c.printConfiguration();
+
 	if(!loaded) {
 		c.printUsage();
 		return EXIT_FAILURE;
 	}
 
-
 	IInputFormat* inputFormat = IInputFormatFactory::make(c.getInputFormat());
 	assert(inputFormat != NULL);
 
-	ifstream inputFile(c.getInput(), ifstream::in);
+	ifstream inputFile(c.getInput().c_str(), ifstream::in);
 	assert(inputFile.is_open());
 
 	Array2D<double> M;
@@ -255,7 +270,7 @@ int main(int argc, char** argv) {
 	IOutputFormat* outputFormat = IOutputFormatFactory::make(c.getOutputFormat());
 	assert(outputFormat != NULL);
 
-	ofstream outputFile(c.getOutput(), ofstream::out | ofstream::trunc);
+	ofstream outputFile(c.getOutput().c_str(), ofstream::out | ofstream::trunc);
 	assert(outputFile.is_open());
 
 	bool write = outputFormat->write(outputFile, M, A);
