@@ -2,6 +2,8 @@ set xlabel 'Workers/Tasks, N'
 
 set ylabel 'Average Normalized Cost'
 
+set yrange [0:1]
+
 set key top left
 
 set style data histogram

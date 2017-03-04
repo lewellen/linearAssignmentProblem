@@ -127,7 +127,8 @@ CostMatrix randomMatrix(size_t size) {
 }
 
 int main(int argc, char** argv) {
-	map<size_t, map<string, SampledValue > > profile;
+	map<size_t, map<string, SampledValue> > profile;
+	map<size_t, map<string, Stopwatch> > timers;
 
 	size_t numSolvers;
 	const string* solverNames = ISolverFactory::getValidNames(numSolvers);
@@ -138,29 +139,27 @@ int main(int argc, char** argv) {
 	size_t sizeMax = 12;
 
 	for(size_t size = sizeMin; size <= sizeMax; ++size) {
-
-		CostMatrix M = randomMatrix(size);
-		Assignment bruteMinA = (*brute)(M);
-		double bruteMinACost = bruteMinA.cost(M);
-
-		IObjective* maxObj = IObjectiveFactory::make(IObjectiveFactory::OBJECTIVE_MAXIMIZE);
-		CostMatrix N = M;
-		(*maxObj)(N);
-		delete maxObj;
-
-		Assignment bruteMaxA = (*brute)(N);
-		double bruteMaxACost = bruteMaxA.cost(M);
-
-		if(bruteMinACost == bruteMaxACost) {
-			continue;
-		}
-
-		assert(bruteMaxACost > bruteMinACost);
-
 		bool repeat = true;
-		Stopwatch R;
-		R.start();
 		do {
+			CostMatrix M = randomMatrix(size);
+			Assignment bruteMinA = (*brute)(M);
+			double bruteMinACost = bruteMinA.cost(M);
+
+			IObjective* maxObj = IObjectiveFactory::make(IObjectiveFactory::OBJECTIVE_MAXIMIZE);
+			CostMatrix N = M;
+			(*maxObj)(N);
+			delete maxObj;
+
+			Assignment bruteMaxA = (*brute)(N);
+			double bruteMaxACost = bruteMaxA.cost(M);
+
+			if(bruteMinACost == bruteMaxACost) {
+				continue;
+			}
+
+			assert(bruteMaxACost > bruteMinACost);
+
+			repeat = false;
 			for(size_t solverIndex = 0; solverIndex < numSolvers; ++solverIndex) {
 				const string& solverName = solverNames[solverIndex];
 				if(solverName == ISolverFactory::SOLVER_BRUTE) {
@@ -168,10 +167,19 @@ int main(int argc, char** argv) {
 				}
 
 				SampledValue& samples = profile[size][solverName];
-				R.stop();
-				if( (samples.numSamples() >= 30) || (R.elapsedMs() >= 2 * 60 * 1000) ) {
-					repeat = false;
-					break;
+				if(samples.numSamples() >= 60) {
+					continue;
+				}
+
+				Stopwatch& R = timers[size][solverName];
+				if(samples.numSamples() == 0) {
+					R.start();
+				} else {
+					R.stop();
+				}
+
+				if(R.elapsedMs() >= 0.5 * 60 * 1000) {
+					continue;
 				}
 		
 				ISolver* solver = ISolverFactory::make(solverName);
@@ -182,16 +190,21 @@ int main(int argc, char** argv) {
 
 				samples.add( (solverACost - bruteMinACost) / (bruteMaxACost - bruteMinACost) );	
 				delete solver;
+				repeat = true;
 			}
 		} while(repeat); 
 	}
-
 
 	delete brute;
 
 	cout << "N\t";
 	for(size_t solverIndex = 0; solverIndex < numSolvers; ++solverIndex) {
-		cout << solverNames[solverIndex] << "\tstdDev";
+		const string& solverName = solverNames[solverIndex];
+		if(solverName == ISolverFactory::SOLVER_BRUTE) {
+			continue;
+		}
+
+		cout << solverName << "\tstdDev";
 		if(solverIndex + 1 != numSolvers) {
 			cout << "\t";
 		}
@@ -201,10 +214,15 @@ int main(int argc, char** argv) {
 	for(size_t size = sizeMin; size <= sizeMax; ++size) {
 		cout << size << "\t";
 		for(size_t solverIndex = 0; solverIndex < numSolvers; ++solverIndex) {
+			const string& solverName = solverNames[solverIndex];
+			if(solverName == ISolverFactory::SOLVER_BRUTE) {
+				continue;
+			}
+
 			double average = 0;
 			double stdev = 0;
 
-			const SampledValue& samples = profile[size][ solverNames[solverIndex] ];
+			const SampledValue& samples = profile[size][solverName];
 			if(!samples.empty()) {
 				average = samples.sampleMean();
 				stdev = samples.sampleStandardDev();

@@ -133,6 +133,10 @@ int main(int argc, char** argv) {
 	const string* solverNames = ISolverFactory::getValidNames(numSolvers);
 	for(size_t solverIndex = 0; solverIndex < numSolvers; ++solverIndex) {
 		const string& solverName = solverNames[solverIndex];
+		if(solverName == ISolverFactory::SOLVER_ATRANDOM) {
+			continue;
+		}
+
 		ISolver* solver = ISolverFactory::make(solverName);
 		assert(solver != NULL);
 
@@ -158,7 +162,12 @@ int main(int argc, char** argv) {
 
 	cout << "N\t";
 	for(size_t solverIndex = 0; solverIndex < numSolvers; ++solverIndex) {
-		cout << solverNames[solverIndex] << "\tstdDev";
+		const string& solverName = solverNames[solverIndex];
+		if(solverName == ISolverFactory::SOLVER_ATRANDOM) {
+			continue;
+		}
+
+		cout << solverName << "\tstdDev";
 		if(solverIndex + 1 != numSolvers) {
 			cout << "\t";
 		}
@@ -168,10 +177,15 @@ int main(int argc, char** argv) {
 	for(size_t size = 2; size <= 12; ++size) {
 		cout << size << "\t";
 		for(size_t solverIndex = 0; solverIndex < numSolvers; ++solverIndex) {
+			const string& solverName = solverNames[solverIndex];
+			if(solverName == ISolverFactory::SOLVER_ATRANDOM) {
+				continue;
+			}
+
 			double average = 0;
 			double stdev = 0;
 
-			const SampledValue& samples = profile[size][ solverNames[solverIndex] ];
+			const SampledValue& samples = profile[size][solverName];
 			if(!samples.empty()) {
 				average = samples.sampleMean();
 				stdev = samples.sampleStandardDev();
