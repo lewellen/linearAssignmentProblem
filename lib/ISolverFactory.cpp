@@ -5,24 +5,28 @@
 
 #include "AlternativeMethodSolver.h"
 #include "BruteSolver.h"
+#include "GreedySolver.h"
 #include "HungarianMethodSolver.h"
 
 const string ISolverFactory::SOLVER_ALTERNATIVE = "ALTERNATIVE";
 const string ISolverFactory::SOLVER_BRUTE = "BRUTE";
+const string ISolverFactory::SOLVER_GREEDY = "GREEDY";
 const string ISolverFactory::SOLVER_HUNGARIAN = "HUNGARIAN";
 
 bool ISolverFactory::isValidName(const string& name) {
 	return 
 		(name == SOLVER_ALTERNATIVE) ||
 		(name == SOLVER_BRUTE) ||
+		(name == SOLVER_GREEDY) || 
 		(name == SOLVER_HUNGARIAN);
 }
 
 const string* ISolverFactory::getValidNames(size_t& numNames) {
-	static size_t s_numNames = 3;
+	static size_t s_numNames = 4;
 	static string s_names[] = {
 		SOLVER_ALTERNATIVE,
 		SOLVER_BRUTE,
+		SOLVER_GREEDY,
 		SOLVER_HUNGARIAN
 	};
 
@@ -39,6 +43,10 @@ ISolver* ISolverFactory::make(const string& name) {
 
 	if(name == SOLVER_BRUTE) {
 		return new BruteSolver();
+	}
+
+	if(name == SOLVER_GREEDY) {
+		return new GreedySolver();
 	}
 
 	if(name == SOLVER_HUNGARIAN) {

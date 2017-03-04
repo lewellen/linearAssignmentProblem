@@ -8,6 +8,13 @@ cppFlags = -O3 -Wall -Wno-unused-variable -Wno-narrowing -Wno-sign-compare
 
 all: $(bins)
 
+error.png: obj/error.dat src/error.gpi
+	gnuplot src/error.gpi
+
+obj/error.dat: bin/optimalityShowdown
+	bin/optimalityShowdown > obj/error.dat
+
+
 runtime.png: obj/runtime.dat src/runtime.gpi
 	gnuplot src/runtime.gpi
 

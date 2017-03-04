@@ -225,8 +225,6 @@ const string CLI::FlagNames[] = { "" FLAGS };
 int main(int argc, char** argv) {
 	CLI c;
 	bool loaded = c.load(argc, argv);
-	c.printConfiguration();
-
 	if(!loaded) {
 		c.printUsage();
 		return EXIT_FAILURE;

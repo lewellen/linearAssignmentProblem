@@ -11,6 +11,7 @@ class ISolverFactory {
 public:
 	static const string SOLVER_ALTERNATIVE;
 	static const string SOLVER_BRUTE;
+	static const string SOLVER_GREEDY;
 	static const string SOLVER_HUNGARIAN;
 
 	static bool isValidName(const string& name);

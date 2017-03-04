@@ -13,6 +13,9 @@ using std::vector;
 Assignment::Assignment(size_t numWorkers) {
 	m_size = numWorkers;
 	m_v.reserve(numWorkers);
+	for(size_t i = 0; i < m_size; ++i) {
+		m_v[i] = 0;
+	}
 }
 
 Assignment::Assignment(const Assignment& other) {
