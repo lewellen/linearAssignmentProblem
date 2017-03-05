@@ -4,7 +4,7 @@ set ylabel 'Average Normalized Cost'
 
 set yrange [0:1]
 
-set key top left
+set key top right
 
 set style data histogram
 set style histogram cluster errorbars gap 2 lw 1

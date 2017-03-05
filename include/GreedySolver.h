@@ -13,6 +13,10 @@ public:
 	~GreedySolver();
 
 	Assignment operator() (const Array2D<double>& M) const;
+
+private:
+	Assignment cubicImpl(const Array2D<double>& M) const;
+	Assignment quadarithmicImpl(const Array2D<double>& M) const;	
 };
 
 #endif

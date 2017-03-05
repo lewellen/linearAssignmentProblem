@@ -136,7 +136,7 @@ int main(int argc, char** argv) {
 	ISolver* brute = ISolverFactory::make(ISolverFactory::SOLVER_BRUTE);
 
 	size_t sizeMin = 2;
-	size_t sizeMax = 12;
+	size_t sizeMax = 10;
 
 	for(size_t size = sizeMin; size <= sizeMax; ++size) {
 		bool repeat = true;
