@@ -6,13 +6,15 @@
 #include "AlternativeMethodSolver.h"
 #include "AtRandomSolver.h"
 #include "BruteSolver.h"
-#include "GreedySolver.h"
+#include "EfficientGreedySolver.h"
 #include "HungarianMethodSolver.h"
+#include "NaiveGreedySolver.h"
 
 const string ISolverFactory::SOLVER_ALTERNATIVE = "ALTERNATIVE";
 const string ISolverFactory::SOLVER_ATRANDOM = "RANDOM";
 const string ISolverFactory::SOLVER_BRUTE = "BRUTE";
-const string ISolverFactory::SOLVER_GREEDY = "GREEDY";
+const string ISolverFactory::SOLVER_GREEDY_EFFICIENT = "GREEDY_EFFICIENT";
+const string ISolverFactory::SOLVER_GREEDY_NAIVE = "GREEDY_NAIVE";
 const string ISolverFactory::SOLVER_HUNGARIAN = "HUNGARIAN";
 
 bool ISolverFactory::isValidName(const string& name) {
@@ -20,17 +22,19 @@ bool ISolverFactory::isValidName(const string& name) {
 		(name == SOLVER_ALTERNATIVE) ||
 		(name == SOLVER_ATRANDOM) ||
 		(name == SOLVER_BRUTE) ||
-		(name == SOLVER_GREEDY) || 
+		(name == SOLVER_GREEDY_EFFICIENT) || 
+		(name == SOLVER_GREEDY_NAIVE) || 
 		(name == SOLVER_HUNGARIAN);
 }
 
 const string* ISolverFactory::getValidNames(size_t& numNames) {
-	static size_t s_numNames = 5;
+	static size_t s_numNames = 6;
 	static string s_names[] = {
 		SOLVER_ALTERNATIVE,
 		SOLVER_ATRANDOM,
 		SOLVER_BRUTE,
-		SOLVER_GREEDY,
+		SOLVER_GREEDY_EFFICIENT,
+		SOLVER_GREEDY_NAIVE,
 		SOLVER_HUNGARIAN
 	};
 
@@ -53,8 +57,12 @@ ISolver* ISolverFactory::make(const string& name) {
 		return new BruteSolver();
 	}
 
-	if(name == SOLVER_GREEDY) {
-		return new GreedySolver();
+	if(name == SOLVER_GREEDY_EFFICIENT) {
+		return new EfficientGreedySolver();
+	}
+
+	if(name == SOLVER_GREEDY_NAIVE) {
+		return new NaiveGreedySolver();
 	}
 
 	if(name == SOLVER_HUNGARIAN) {
