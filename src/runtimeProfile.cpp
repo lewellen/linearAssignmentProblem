@@ -9,6 +9,7 @@
 #include "Assignment.h"
 #include "ISolver.h"
 #include "ISolverFactory.h"
+#include "SampledValue.h"
 #include "Stopwatch.h"
 
 using std::cout;
@@ -16,98 +17,6 @@ using std::endl;
 using std::list;
 using std::map;
 using std::pair;
-
-/*
-class Interval {
-public:
-	Interval() {
-		initialize(0, 0);
-	}
-
-	Interval(const double& lb, const double& ub) {
-		initialize(lb, ub);
-	}
-
-	Interval(const Interval& other) {
-		initialize(other.m_lb, other.m_ub);
-	}
-
-	~Interval() {
-
-	}
-
-	const double& getLowerBound() const {
-		return m_lb;
-	}
-
-	const double& getUpperBound() const {
-		return m_ub;
-	}
-
-	friend ostream& operator<< (ostream& s, const Interval& I) {
-		return s << "[" << I.m_lb << ", " << I.m_ub << "]";
-	}
-
-private:
-	double m_lb, m_ub;
-
-	void initialize(const double& lb, const double& ub) {
-		assert(lb <= ub);
-		m_lb = lb;
-		m_ub = ub;
-	}
-};*/
-
-class SampledValue {
-public:
-	SampledValue() {
-		m_numSamples = 0;
-		m_sampleMean = 0;
-		m_sampleVariance = 0;
-	}
-
-	void add(const double& value) {
-		// Welford method for variance (Knuth)
-		++m_numSamples;
-
-		double oldSampleMean = m_sampleMean;
-		m_sampleMean += ( value - m_sampleMean ) / m_numSamples;
-		m_sampleVariance += (value - oldSampleMean) * (value - m_sampleMean);
-	}
-
-	bool empty() const {
-		return m_numSamples == 0;
-	}
-
-	double numSamples() const {
-		return m_numSamples;
-	}
-
-	double sampleMean() const {
-		assert(m_numSamples > 0);
-		return m_sampleMean;
-	}
-
-	double sampleStandardDev() const {
-		assert(m_numSamples > 0);
-		return sqrt( m_sampleVariance / m_numSamples );
-	}
-
-	/*Interval confidenceInterval(const double& confidenceLevel) const {
-		assert( (0 < confidenceLevel) && (confidenceLevel <= 1) );
-		assert( m_numSamples > 0 );
-
-		double alpha = 0.5 * (1 - confidenceLevel);
-		double degreeOfFreedom = m_numSamples - 1;
-
-		TODO: Read up on efficient way to find critical values from t-dist		
-	}*/
-
-private:
-	double m_numSamples;
-	double m_sampleMean;
-	double m_sampleVariance;
-};
 
 typedef Array2D<double> CostMatrix;
 

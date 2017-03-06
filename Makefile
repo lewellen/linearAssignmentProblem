@@ -2,7 +2,7 @@ libObjs = $(patsubst lib/%.cpp, obj/lib/%.o, $(wildcard lib/*.cpp))
 bins = $(patsubst src/%.cpp, bin/%, $(wildcard src/*.cpp))
 
 cppTool = g++
-cppFlags = -O3 -Wall -Wno-unused-variable -Wno-narrowing -Wno-sign-compare 
+cppFlags = -Wall -Wno-unused-variable -Wno-narrowing -Wno-sign-compare 
 
 .PHONY: all clean
 
