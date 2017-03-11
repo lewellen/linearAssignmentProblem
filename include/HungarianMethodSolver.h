@@ -7,6 +7,10 @@
 #include "Assignment.h"
 #include "ISolver.h"
 
+#ifdef DEBUG
+#include "IHungarianLog.h" 
+#endif
+
 using std::list;
 
 class HungarianMethodSolver : public ISolver {
@@ -16,10 +20,12 @@ public:
 
 	Assignment operator() (const Array2D<double>& M) const; 
 
+#ifdef DEBUG
+public:
+	void setLog(IHungarianLog* log);
 private:
-	size_t findZeroCovering(
-		const Array2D<double>& B, 
-		list<size_t>& verticalLines, list<size_t>& horizontalLines) const;
+	IHungarianLog* m_log;
+#endif
 };
 
 #endif

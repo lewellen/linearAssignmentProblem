@@ -10,6 +10,11 @@
 #include "IOutputFormat.h"
 #include "IOutputFormatFactory.h"
 
+#ifdef DEBUG
+#include "HungarianMethodSolver.h"
+#include "LatexHungarianLog.h"
+#endif
+
 using std::cout;
 using std::endl;
 
@@ -52,6 +57,13 @@ int main(int argc, char** argv) {
 
 	IInputFormat* inputFormat = IInputFormatFactory::make(IInputFormatFactory::I_FORMAT_MATRIX);
 	IOutputFormat* outputFormat = IOutputFormatFactory::make(IOutputFormatFactory::O_FORMAT_MATRIX);
+
+#ifdef DEBUG
+	if(c.getSolver() == ISolverFactory::SOLVER_HUNGARIAN) {
+		HungarianMethodSolver* h = dynamic_cast<HungarianMethodSolver*>(other);
+		h->setLog(new LatexHungarianLog(cout));
+	}
+#endif
 
 	bool foundCounterExample = false;
 	for(size_t i = 0; i < c.getMaxIterations(); ++i) {
