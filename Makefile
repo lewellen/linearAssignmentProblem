@@ -2,11 +2,14 @@ libObjs = $(patsubst lib/%.cpp, obj/lib/%.o, $(wildcard lib/*.cpp))
 bins = $(patsubst src/%.cpp, bin/%, $(wildcard src/*.cpp))
 
 cppTool = g++
-cppFlags = -Wall -Wno-unused-variable -Wno-narrowing -Wno-sign-compare 
+cppFlags = -g -Wall -std=c++11  
 
 .PHONY: all clean
 
 all: $(bins)
+
+bin/document.pdf: doc/document.tex | bin
+	pdflatex --output-directory=bin doc/document.tex
 
 error.png: obj/error.dat src/error.gpi
 	gnuplot src/error.gpi

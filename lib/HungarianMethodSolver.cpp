@@ -23,140 +23,246 @@ HungarianMethodSolver::~HungarianMethodSolver() {
 }
 
 Assignment HungarianMethodSolver::operator() (const Array2D<double>& A) const {
+	// Munkres, J. Algorithms for the Assignment and Transportation Problems.
+	// Journal of the Society for Industrial and Applied Mathematics, Vol. 5,
+	// No. 1 (Mar., 1957), 32-38.
+
 	assert(A.getNumRows() == A.getNumCols());
 
-	Assignment assignments(A.getNumRows());
+	Array2D<double> B = A;
 
-	Array2D<double> B = A; // explicit copy
-
-	while(true) {
-		Array2DMask M(B.getNumRows(), B.getNumCols());
-
-		// Deduct row min from each row
-		for(Array2DMask::iterator row = M.begin(0); row != M.end(0); ++row) {
-			double minValue = numeric_limits<double>::infinity();
-			for(Array2DMask::iterator col = M.begin(1); col != M.end(1); ++col) {
-				double value = B.getEntry( *row, *col );
-				if(minValue > value) {
-					minValue = value;
-				}
-			}
-
-			for(Array2DMask::iterator col = M.begin(1); col != M.end(1); ++col) {
-				double value = B.getEntry( *row, *col );
-				B.getEntry(*row, *col) = value - minValue;
-			}
-		}
-
-
-		// Deduct col min from each column
-		for(Array2DMask::iterator col = M.begin(1); col != M.end(1); ++col) {
-			double minValue = numeric_limits<double>::infinity();
-			for(Array2DMask::iterator row = M.begin(0); row != M.end(0); ++row) { 
-				double value = B.getEntry(*row, *col);
-				if(minValue > value) {
-					minValue = value;
-				}
-			}
-
-			for(Array2DMask::iterator row = M.begin(0); row != M.end(0); ++row) {
-				double value = B.getEntry(*row, *col);
-				B.getEntry(*row, *col) = value - minValue;
-			}
-		}
-
-		// Draw minimum number of lines through all zeros. (Munkres, Konig, Ford-Fulkerson)
-		list<size_t> verticalLines, horizontalLines;
-		size_t numLines = findZeroCovering(B, verticalLines, horizontalLines);
-
-		// If there are N lines; done.
-		if(numLines == B.getNumRows()) {
-			return assignments;
-		}
-
-		// Find the smallest entry not covered by any line. 
-		for(list<size_t>::const_iterator i = horizontalLines.begin(); i != horizontalLines.end(); ++i) {
-			M.erase(0, *i);
-		}
-
-		for(list<size_t>::const_iterator i = verticalLines.begin(); i != verticalLines.end(); ++i) {
-			M.erase(1, *i);
-		}
-
+	// A_{i, j} = A_{i, j} - min_k A_{i, k} for all (i, j)
+	for(size_t row = 0; row < B.getNumRows(); ++row) {
 		double minValue = numeric_limits<double>::infinity();
-		for(Array2DMask::iterator row = M.begin(0); row != M.end(0); ++row) {
-			for(Array2DMask::iterator col = M.begin(1); col != M.end(1); ++col) {
-				double value = B.getEntry(*row, *col);
-				if(minValue > value) {
-					minValue = value;
+		for(size_t col = 0; col < B.getNumCols(); ++col) {
+			const double& value = B.getEntry(row, col);
+			if(minValue > value) {
+				minValue = value;
+			}
+		}
+
+		for(size_t col = 0; col < B.getNumCols(); ++col) {
+			double& value = B.getEntry(row, col);
+			value -= minValue;
+		}
+	}
+
+	// A_{i, j} = A_{i, j} - min_k A_{k, j} for all (i, j)
+	for(size_t col = 0; col < B.getNumCols(); ++col) {
+		double minValue = numeric_limits<double>::infinity();
+		for(size_t row = 0; row < B.getNumRows(); ++row) {
+			const double& value = B.getEntry(row, col);
+			if(minValue > value) {
+				minValue = value;
+			}
+		}
+
+		for(size_t row = 0; row < B.getNumRows(); ++row) {
+			double& value = B.getEntry(row, col);
+			value -= minValue;
+		}
+	}
+
+	// Keep tabs on which rows and columns are covered
+	bool rowCovered[B.getNumRows()];
+	bool colCovered[B.getNumCols()];
+
+	memset(rowCovered, false, sizeof(bool) * B.getNumRows());
+	memset(colCovered, false, sizeof(bool) * B.getNumCols());
+
+	// Keep tabs on zeros that have been starred (ie assigned worker-job pairs)
+	bool rowHasStar[B.getNumRows()];
+	bool colHasStar[B.getNumCols()];
+
+	memset(rowHasStar, false, sizeof(bool) * B.getNumRows());
+	memset(colHasStar, false, sizeof(bool) * B.getNumCols());
+
+	size_t rowsStarredCol[B.getNumRows()];
+	size_t colsStarredRow[B.getNumCols()];
+
+	for(size_t row = 0; row < B.getNumRows(); ++row) {
+		rowsStarredCol[row] = B.getNumCols();
+	}
+
+	for(size_t col = 0; col < B.getNumCols(); ++col) {
+		colsStarredRow[col] = B.getNumRows();
+	}
+
+	size_t numStarredZeros = 0;
+
+	// Keep tabs on zeros that have been primed (ie candidate worker-job pairs)
+	size_t rowsPrimedCol[B.getNumRows()];
+
+	for(size_t row = 0; row < B.getNumRows(); ++row) {
+		rowsPrimedCol[row] = B.getNumCols();
+	}
+
+	// Anticipate number of zeros << total number of entries
+	typedef pair<size_t, size_t> Entry;
+	list<Entry> zeros;
+
+	for(size_t row = 0; row < B.getNumRows(); ++row) {
+		for(size_t col = 0; col < B.getNumCols(); ++col) {
+			const double& value = B.getEntry(row, col);
+			if(value == 0) {
+				zeros.push_back(Entry(row, col));
+			}
+		}
+	}
+
+	// Find a tenative assignment by going row-by-row and assigning wherever 
+	// there's a zero in a column that doesn't already have an assigned zero.
+	for(list<Entry>::iterator i = zeros.begin(); i != zeros.end(); ++i) {
+		const Entry& entry = *i;
+		const size_t& row = entry.first;
+		const size_t& col = entry.second;
+
+		if(!rowHasStar[row] && !colHasStar[col]) {
+			rowHasStar[row] = true;
+			colHasStar[col] = true;
+			rowsStarredCol[row] = col;
+			colsStarredRow[col] = row;
+
+			colCovered[col] = true;
+			++numStarredZeros;
+		}
+	}
+
+
+	size_t iterations = B.getNumRows();
+	while( (iterations-- > 0) && (numStarredZeros < B.getNumRows()) ) {
+		bool didStep2 = false;
+		for(list<Entry>::iterator i = zeros.begin(); i != zeros.end(); ++i) {
+			const Entry& entry = *i;
+			if(rowCovered[entry.first] || colCovered[entry.second]) {
+				continue;
+			}
+
+			rowsPrimedCol[entry.first] = entry.second;
+
+			if(! rowHasStar[entry.first] ) {
+				// Step 2
+				didStep2 = true;
+
+				list<Entry> starred, primed;
+				size_t row = entry.first;
+				size_t col = entry.second;
+				bool isPrime = true;
+
+				size_t maxAttempts = B.getNumRows() * B.getNumCols();
+				do {
+					if(isPrime) {
+						size_t nextRow = colsStarredRow[col];
+						primed.push_back(Entry(row,col));
+						if(nextRow < B.getNumRows()) {
+							row = nextRow;
+						} else {
+							break;
+						}
+					} else {
+						size_t nextCol = rowsPrimedCol[row];
+						starred.push_back(Entry(row, col));
+						if(nextCol < B.getNumCols()) {
+							col = nextCol;
+						} else {
+							break;
+						}
+					}
+				} while(--maxAttempts > 0);
+
+				// All starred zeros in the sequence become unstarred.
+				for(list<Entry>::iterator i = starred.begin(); i != starred.end(); ++i) {
+					rowHasStar[(*i).first] = false ;
+					colHasStar[(*i).second] = false ;
+					rowsStarredCol[(*i).first] = B.getNumCols();
+					colsStarredRow[(*i).second] = B.getNumRows();
+					--numStarredZeros;
+				}
+
+				// All primed zeros in the sequence become starred
+				for(list<Entry>::iterator i = primed.begin(); i != primed.end(); ++i) {
+					rowHasStar[(*i).first] = true;
+					colHasStar[(*i).second] = true;
+					rowsStarredCol[(*i).first] = (*i).second;
+					colsStarredRow[(*i).second] = (*i).first;
+					++numStarredZeros;
+				}
+
+				// Erase all primes
+				for(size_t r = 0; r < B.getNumRows(); ++r) {
+					rowsPrimedCol[r] = B.getNumCols();
+				}
+
+				// Uncover all rows
+				memset(rowCovered, false, sizeof(bool) * B.getNumRows());
+
+				// Cover all cols containing a starred zero
+				for(size_t c = 0; c < B.getNumCols(); ++c) {
+					colCovered[c] = colsStarredRow[c] < B.getNumRows();
+				}
+
+				break;
+			} else {
+				rowCovered[entry.first] = true;
+				colCovered[ rowsStarredCol[entry.first] ] = false;
+			}
+		} // Repeat until all zeros covered
+
+		if(didStep2) {
+			continue;
+		}
+
+		// Find the minimum uncovered value
+		double minValue = numeric_limits<double>::infinity();
+		for(size_t row = 0; row < B.getNumRows(); ++row) {
+			if(!rowCovered[row]) {
+				for(size_t col = 0; col < B.getNumCols(); ++col) {
+					if(!colCovered[col]) {
+						const double& value = B.getEntry(row, col);
+						if(minValue > value) {
+							minValue = value;
+						}
+					}
 				}
 			}
 		}
 
-		// Deduct the minimum value from all uncovered entries, and then
-		// increment each entry covered by two lines.
-		for(Array2DMask::iterator row = M.begin(0); row != M.end(0); ++row) {
-			for(Array2DMask::iterator col = M.begin(1); col != M.end(1); ++col) {
-				double value = B.getEntry(*row, *col);
-				B.getEntry(*row, *col) = value - minValue;
+		// Add min to each covered row
+		for(size_t row = 0; row < B.getNumRows(); ++row) {
+			if(rowCovered[row]) {
+				for(size_t col = 0; col < B.getNumCols(); ++col) {
+					double& value = B.getEntry(row, col);
+					value += minValue;
+				}
 			}
 		}
 
-		for(list<size_t>::const_iterator row = horizontalLines.begin(); row != horizontalLines.end(); ++row) {
-			for(list<size_t>::const_iterator col = verticalLines.begin(); col != verticalLines.end(); ++col) {
-				double value = B.getEntry(*row, *col);
-				B.getEntry(*row, *col) = value + minValue;
+		// Subtract min from each uncovered col
+		for(size_t col = 0; col < B.getNumCols(); ++col) {
+			if(!colCovered[col]) {
+				for(size_t row = 0; row < B.getNumRows(); ++row) {
+					double& value = B.getEntry(row, col);
+					value -= minValue;
+				}
 			}
 		}
 
-		// Temporary for unit tests to pass.
-		break;
+		// Refresh the list of zeros.
+		zeros.clear();
+		for(size_t row = 0; row < B.getNumRows(); ++row) {
+			for(size_t col = 0; col < B.getNumCols(); ++col) {
+				const double& value = B.getEntry(row, col);
+				if(value == 0) {
+					zeros.push_back(Entry(row, col));
+				}
+			}
+		}
 	}
 
-	return assignments;
+	Assignment assignment(A.getNumRows());
+	for(size_t row = 0; row < A.getNumRows(); ++row) {
+		assignment[row] = rowsStarredCol[row];
+	}
+	return assignment;
 }
 
-size_t HungarianMethodSolver::findZeroCovering(
-	const Array2D<double>& B, 
-	list<size_t>& verticalLines, list<size_t>& horizontalLines) const {
-	
-	// Munkres approach 
-	// https://www.math.ucdavis.edu/~saito/data/emd/munkres.pdf
-
-	// Preliminaries:
-	// Star each zero in the matrix such that it is the only zero stared in
-	// its column and row. Cover every column with a stared zero.
-
-	Array2D<char> annotations(B.getNumRows(), B.getNumCols());
-	for(size_t row = 0; row < annotations.getNumRows(); ++row) {
-		for(size_t col = 0; col < annotations.getNumCols(); ++col) {
-			annotations.getEntry(row, col) = '\0';
-		}
-	}
-
-	Array2DMask mask(B.getNumRows(), B.getNumCols());
-
-	for(Array2DMask::iterator row = mask.begin(0); row != mask.end(0); ++row) {
-		size_t zeroCol = B.getNumCols();
-		for(Array2DMask::iterator col = mask.begin(1); col != mask.end(1); ++col) {
-			double value = B.getEntry(*row, *col);
-			if(value == 0) {
-				zeroCol = value;
-				break;
-			}
-		}
-		if(zeroCol < B.getNumCols()) {
-			annotations.getEntry(*row, zeroCol) = '*';
-			mask.erase(1, zeroCol);
-		}
-	}
-
-
-	// Step 1:
-	// Choose a non-covered zero and prime it. Consider the row containing it.
-	// If there is no starred zero in the row, go at once to Step 2. If there
-	// is a starred zero in this row, cover this row and uncover the column of
-	// the zero. Repeat until all zeros are covered. Go to step 3.
-
-	return 0;
-}

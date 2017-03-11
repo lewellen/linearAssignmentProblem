@@ -26,5 +26,5 @@ bool ListOutputFormat::write(ostream& s, const Array2D<double>& M, const Assignm
 
 	s << endl;
 
-	return s;
+	return true;
 } 

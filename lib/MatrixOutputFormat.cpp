@@ -40,5 +40,5 @@ bool MatrixOutputFormat::write(ostream& s, const Array2D<double>& M, const Assig
 		s << endl;
 	}
 
-	return s;
+	return true;
 } 

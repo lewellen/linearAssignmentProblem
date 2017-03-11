@@ -19,5 +19,5 @@ bool TableOutputFormat::write(ostream& s, const Array2D<double>& M, const Assign
 	for(size_t i = 0; i < A.size(); ++i) {
 		s << i << " " << A[i] << " " << M.getEntry(i, A[i]) << endl;
 	}
-	return s;
+	return true;
 } 

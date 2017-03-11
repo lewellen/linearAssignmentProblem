@@ -1,0 +1,82 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{geometry}
+\usepackage{tikz}
+
+\newgeometry{margin=1.25in}
+
+\begin{document}
+
+\author{Garrett Lewellen}
+\title{A Greedy Polynomial Time Approxmation Scheme for the Linear Assignment Problem}
+
+\maketitle
+
+\section{Introduction}
+
+Simplex method
+
+Hungerian algorithm - Kuhn, Munkres, Karp/Edmonds; Konig, Es-something
+
+Auction algorithm - Parallel
+
+Cavity method - Statistical mechanics?
+
+\section{Outline of Algorithm}
+
+Assume an $n \times n$ cost matrix.
+
+\begin{enumerate}
+	\item Allocate continuous $n^2$ nodes
+	\item In $O(n^2)$ time link the nodes together
+	\item Sort the $n^2$ nodes in ascending value in $O(n^2 \log n)$ time
+	\item Let cursor = minimum valued node
+	\item While cursor is not NULL -- This is $O(n)$
+	\begin{enumerate}
+		\item Assign cursor job to worker
+		\item Store the next next cursor
+		\item Enqueue (cursor, nil) into Q
+		\item While( Q is not empty )  --- This is $O(2n - 1)$
+		\begin{enumerate}
+			\item Dequeue (q, a) from Q
+			\item Set q's left neighbor to point to q's right neighbor (vice versa)
+			\item Set q's top neighbor to point to q's bottom neighbor (vice versa)
+			\item If a is nil and for each present left, right, top, or bottom neighbor, enqueue (neighbor, direction)
+			\item If a is not nill, then if a is present then enqueue (neighbor, a)
+			\item Set q's previous to point to q's next (vice versa)
+			\item If cursor equals q, update next cursor to equal q's next
+			\item delete q
+		\end{enumerate}
+		\item cursor = next cursor
+	\end{enumerate}
+\end{enumerate}
+
+Inner loop analysis showing that you end up doing $O(n^2)$ work -- $n$ on the outer loop and $2n - 1$ on the inner loop.
+
+\begin{equation}
+	\sum_{k = 1}^{n} 2k - 1 = 2 \frac{n (n + 1)}{2} - n = n^2
+\end{equation}
+
+\section{Evaluation}
+
+\section{Conclusion}
+\begin{equation}
+\begin{pmatrix}
+93 & 96 & 87 & \fbox{25} & 103 & 45\\
+96 & 102 & 59 & 31 & 72 & \fbox{37}\\
+100 & 69 & 73 & 36 & \fbox{50} & 36\\
+82 & 46 & \fbox{21} & 78 & 77 & 39\\
+92 & \fbox{40} & 72 & 33 & 77 & 45\\
+\fbox{39} & 12 & 32 & 68 & 79 & 77
+\end{pmatrix}
+\end{equation}
+
+
+
+
+
+
+
+
+\end{document}

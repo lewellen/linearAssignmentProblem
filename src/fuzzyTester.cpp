@@ -24,11 +24,11 @@ public:
 	}
 
 	size_t getMaxIterations() const {
-		return 1000;
+		return 3;
 	}
 
 	const char* getSolver() const {
-		return "GREEDY";
+		return "HUNGARIAN";
 	}
 
 	bool isValid() const {
@@ -40,7 +40,7 @@ public:
 	}
 };
 
-int counterExample(int argc, char** argv) {
+int main(int argc, char** argv) {
 	CLI c(argc, argv);
 	if(!c.isValid()) {
 		c.printUsage();
@@ -53,6 +53,7 @@ int counterExample(int argc, char** argv) {
 	IInputFormat* inputFormat = IInputFormatFactory::make(IInputFormatFactory::I_FORMAT_MATRIX);
 	IOutputFormat* outputFormat = IOutputFormatFactory::make(IOutputFormatFactory::O_FORMAT_MATRIX);
 
+	bool foundCounterExample = false;
 	for(size_t i = 0; i < c.getMaxIterations(); ++i) {
 		Array2D<double> M( c.getSize() );
 		for(size_t row = 0; row < M.getNumRows(); ++row) {
@@ -68,6 +69,7 @@ int counterExample(int argc, char** argv) {
 		double otherCost = otherA.cost(M);
 
 		if( bruteCost != otherCost ) {
+			cout << "Found counter example after " << i << " attempts." << endl;
 			cout << "Cost matrix: " << endl;
 			inputFormat->write(cout, M);
 			cout << endl;
@@ -80,47 +82,13 @@ int counterExample(int argc, char** argv) {
 			outputFormat->write(cout, M, otherA);
 			cout << endl;
 	
+			foundCounterExample = true;
 			break;
 		}
 	}
 
-	delete brute;
-	delete other;
-	delete inputFormat;
-	delete outputFormat;
-
-	return EXIT_SUCCESS;
-
-}
-
-int main(int argc, char** argv) {
-	CLI c(argc, argv);
-	if(!c.isValid()) {
-		c.printUsage();
-		return EXIT_FAILURE;
-	}
-
-	ISolver* brute = ISolverFactory::make(ISolverFactory::SOLVER_BRUTE);
-	ISolver* other = ISolverFactory::make(c.getSolver());
-
-	IInputFormat* inputFormat = IInputFormatFactory::make(IInputFormatFactory::I_FORMAT_MATRIX);
-	IOutputFormat* outputFormat = IOutputFormatFactory::make(IOutputFormatFactory::O_FORMAT_MATRIX);
-
-	for(size_t i = 0; i < c.getMaxIterations(); ++i) {
-		Array2D<double> M( c.getSize() );
-		for(size_t row = 0; row < M.getNumRows(); ++row) {
-			for(size_t col = 0; col < M.getNumCols(); ++col) {
-				M.getEntry(row, col) = (rand() % 100) + 10;
-			}
-		}
-
-		Assignment bruteA = (*brute)(M);
-		Assignment otherA = (*other)(M);
-
-		double bruteCost = bruteA.cost(M);
-		double otherCost = otherA.cost(M);
-
-		cout << bruteCost << " " << otherCost << endl;
+	if(!foundCounterExample) {
+		cout << "Did not find any counter examples after " << c.getMaxIterations() << " attempts." << endl;
 	}
 
 	delete brute;
