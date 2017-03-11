@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <iostream>
+#include <limits>
 #include <vector>
 
 #include "Array2D.h"
@@ -7,6 +8,7 @@
 #include "MatrixOutputFormat.h"
 
 using std::endl;
+using std::numeric_limits;
 using std::ostream;
 using std::vector;
 
@@ -41,7 +43,13 @@ Assignment::~Assignment() {
 double Assignment::cost(const Array2D<double>& M) const {
 	double cost = 0.0;
 	for(size_t worker = 0; worker < m_size; ++worker) {
-		cost += M.getEntry( worker, m_v[worker] );
+		size_t job = m_v[worker];
+		if(job < M.getNumCols()) {
+			cost += M.getEntry(worker, job);
+		} else {
+			cost = numeric_limits<double>::quiet_NaN();
+			break;
+		}
 	}
 	return cost;
 }

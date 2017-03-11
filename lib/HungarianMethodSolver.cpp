@@ -168,6 +168,8 @@ Assignment HungarianMethodSolver::operator() (const Array2D<double>& A) const {
 							break;
 						}
 					}
+
+					isPrime = !isPrime;
 				} while(--maxAttempts > 0);
 
 				// All starred zeros in the sequence become unstarred.

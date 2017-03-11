@@ -24,7 +24,7 @@ public:
 	}
 
 	size_t getMaxIterations() const {
-		return 3;
+		return 1000;
 	}
 
 	const char* getSolver() const {
