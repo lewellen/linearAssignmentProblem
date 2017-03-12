@@ -33,7 +33,8 @@ public:
 	void setDefaults() {
 		m_size = 6;
 		m_maxItr = 100;
-		m_solverName = ISolverFactory::SOLVER_HUNGARIAN;
+		m_underTestSolver = ISolverFactory::SOLVER_HUNGARIAN;
+		m_baselineSolver = ISolverFactory::SOLVER_BRUTE;
 		m_logPath = "output.tex";
 	}
 
@@ -53,12 +54,20 @@ public:
 		m_maxItr = value;
 	}
 
-	const string& getSolverName() const {
-		return m_solverName;
+	const string& getBaselineSolver() const {
+		return m_baselineSolver;
 	}
 
-	void setSolverName(const string& value) {
-		m_solverName = value;
+	void setBaselineSolver(const string& value) {
+		m_baselineSolver = value;
+	}
+
+	const string& getUnderTestSolver() const {
+		return m_underTestSolver;
+	}
+
+	void setUnderTestSolver(const string& value) {
+		m_underTestSolver = value;
 	}
 
 	const string& getLogPath() const {
@@ -72,14 +81,16 @@ public:
 private:
 	size_t m_size;
 	size_t m_maxItr;
-	string m_solverName;
+	string m_underTestSolver;
+	string m_baselineSolver;
 	string m_logPath;
 };
 
 #define FLAGS \
 	X(E_SIZE, "--size") \
 	X(E_MAX_ITERATIONS, "--max-itr") \
-	X(E_SOLVER, "--solver") \
+	X(E_SOLVER_BASE, "--solver-base") \
+	X(E_SOLVER_TEST, "--solver-test") \
 	X(E_LOG_PATH, "--log-path")
 
 class CLI {
@@ -139,12 +150,20 @@ public:
 			s.setMaxIterations(maxIterations);
 		}
 
-		if(!m_flags[E_SOLVER].empty()) {
-			if (!ISolverFactory::isValidName(m_flags[E_SOLVER]) ) {
-				cout << FlagNames[E_SOLVER] << " " << m_flags[E_SOLVER] << " is not a valid option." << endl;
+		if(!m_flags[E_SOLVER_BASE].empty()) {
+			if (!ISolverFactory::isValidName(m_flags[E_SOLVER_BASE]) ) {
+				cout << FlagNames[E_SOLVER_BASE] << " " << m_flags[E_SOLVER_BASE] << " is not a valid option." << endl;
 				return false;
 			}
-			s.setSolverName(m_flags[E_SOLVER]);
+			s.setUnderTestSolver(m_flags[E_SOLVER_BASE]);
+		}
+
+		if(!m_flags[E_SOLVER_TEST].empty()) {
+			if (!ISolverFactory::isValidName(m_flags[E_SOLVER_TEST]) ) {
+				cout << FlagNames[E_SOLVER_TEST] << " " << m_flags[E_SOLVER_TEST] << " is not a valid option." << endl;
+				return false;
+			}
+			s.setUnderTestSolver(m_flags[E_SOLVER_TEST]);
 		}
 
 		if(!m_flags[E_LOG_PATH].empty()) {
@@ -159,7 +178,8 @@ public:
 	void printUsage(const Settings& s) {
 		cout << FlagNames[E_SIZE] << " " << s.getSize() << endl;
 		cout << FlagNames[E_MAX_ITERATIONS] << " " << s.getMaxIterations() << endl;
-		cout << FlagNames[E_SOLVER] << " " << s.getSolverName() << endl;
+		cout << FlagNames[E_SOLVER_BASE] << " " << s.getBaselineSolver() << endl;
+		cout << FlagNames[E_SOLVER_TEST] << " " << s.getUnderTestSolver() << endl;
 		cout << FlagNames[E_LOG_PATH] << " " << s.getLogPath() << endl;
 	}
 
@@ -188,22 +208,15 @@ int main(int argc, char** argv) {
 		return EXIT_FAILURE;
 	}
 
-	string baselineSolverName;
-	if(s.getSize() < 10) {
-		baselineSolverName = ISolverFactory::SOLVER_BRUTE;
-	} else {
-		baselineSolverName = ISolverFactory::SOLVER_HUNGARIAN;
-	}
-
-	if(baselineSolverName == s.getSolverName()) {
-		cout << "Comparing " << s.getSolverName() << " against itself is meaningless." << endl;
+	if(s.getBaselineSolver() == s.getUnderTestSolver()) {
+		cout << "Comparing " << s.getUnderTestSolver() << " against itself is meaningless." << endl;
 		return EXIT_FAILURE;
 	}
 
-	ISolver* baseline = ISolverFactory::make(baselineSolverName);
+	ISolver* baseline = ISolverFactory::make(s.getBaselineSolver());
 	assert(baseline != NULL);
 
-	ISolver* underTest = ISolverFactory::make(s.getSolverName());
+	ISolver* underTest = ISolverFactory::make(s.getUnderTestSolver());
 	assert(underTest != NULL);
 
 	bool foundCounterExample = false;
@@ -219,7 +232,7 @@ int main(int argc, char** argv) {
 		double underTestCost = underTestA.cost(M);
 
 		if( baselineCost != underTestCost ) {
-			if(s.getSolverName() == ISolverFactory::SOLVER_HUNGARIAN) {
+			if(s.getUnderTestSolver() == ISolverFactory::SOLVER_HUNGARIAN) {
 				HungarianMethodSolver* h = dynamic_cast<HungarianMethodSolver*>(underTest);
 				assert(h != NULL);
 
@@ -235,7 +248,7 @@ int main(int argc, char** argv) {
 				log.close();
 
 				logWritten = true;
-			} else if(s.getSolverName() == ISolverFactory::SOLVER_GREEDY_NAIVE || s.getSolverName() == ISolverFactory::SOLVER_GREEDY_EFFICIENT) {
+			} else if(s.getUnderTestSolver() == ISolverFactory::SOLVER_GREEDY_NAIVE || s.getUnderTestSolver() == ISolverFactory::SOLVER_GREEDY_EFFICIENT) {
 				GreedySolver* g = dynamic_cast<GreedySolver*>(underTest);
 				assert(g != NULL);
 
@@ -259,14 +272,14 @@ int main(int argc, char** argv) {
 	}
 
 	if(foundCounterExample) {
-		cout << "Found counter example after " << i << " attempts." << endl;
+		cout << "Found counterexample after " << i << " attempts." << endl;
 		if(logWritten) {
 			cout << "Wrote log to '" << s.getLogPath() << "'." << endl;
 		} else {
-			cout << s.getSolverName() << " does not have logging capabilities." << endl;
+			cout << s.getUnderTestSolver() << " does not have logging capabilities." << endl;
 		}
 	} else {
-		cout << "Did not find any counter examples after " << s.getMaxIterations() << " attempts." << endl;
+		cout << "Did not find any counterexamples after " << s.getMaxIterations() << " attempts." << endl;
 	}
 
 	delete baseline;
