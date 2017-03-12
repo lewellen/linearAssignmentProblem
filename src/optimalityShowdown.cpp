@@ -132,11 +132,11 @@ int main(int argc, char** argv) {
 			double stdev = 0;
 
 			const SampledValue& samples = profile[size][solverName];
-			assert(!samples.empty());
-			//if(!samples.empty()) {
+			//assert(!samples.empty());
+			if(!samples.empty()) {
 				average = samples.sampleMean();
 				stdev = samples.sampleStandardDev();
-			//}
+			}
 
 			cout << average << "\t" << stdev;
 			if(solverIndex + 1 != numSolvers) {

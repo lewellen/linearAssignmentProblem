@@ -154,14 +154,75 @@ void LatexHungarianLog::afterInitAssignment(
 	m_output << "\\end{equation}" << endl;
 } 
 
-void LatexHungarianLog::afterStep1(
+void LatexHungarianLog::afterPrime(
 	const Array2D<double>& M,
 	const size_t* rowsStarredCol,
 	const bool* colCovered,
 	const bool* rowCovered,
 	const size_t* rowsPrimedCol
 ) {
-	m_output << "\\paragraph{After step 1:}" << endl;
+	m_output << "\\paragraph{After priming:}" << endl;
+
+	m_output << "\\begin{equation}" << endl;
+	m_output << "\\begin{pmatrix}" << endl;
+
+	for(size_t row = 0; row < M.getNumRows(); ++row) {
+		size_t colStar = rowsStarredCol[row];
+		size_t colPrime = rowsPrimedCol[row];
+
+		for(size_t col = 0; col < M.getNumCols(); ++col) {
+			if(colCovered[col] || rowCovered[row]) {
+				m_output << "\\colorbox{yellow}{";
+			}
+
+			if( colStar == col) {
+				m_output << "\\textcolor{red}{";
+			} else if( colPrime == col) {
+				m_output << "\\textcolor{green}{";
+			}
+
+			const double& value = M.getEntry(row, col);
+			if(value == 0) {
+				m_output << "\\textbf{";
+			}
+
+			m_output << value;
+
+			if(value == 0) {
+				m_output << "}";
+			}
+
+			if( colStar == col ||  colPrime == col ) {
+				m_output << "}";
+			}
+
+			if(colCovered[col] || rowCovered[row] ) {
+				m_output << "}";
+			}
+
+			if(col + 1 != M.getNumCols()) {
+				m_output << " & ";
+			}
+		}
+
+		if(row + 1 != M.getNumRows()) {
+			cout << " \\\\";
+		}
+		cout << endl;
+	}
+
+	m_output << "\\end{pmatrix}" << endl;
+	m_output << "\\end{equation}" << endl;
+} 
+
+void LatexHungarianLog::afterStep2(
+	const Array2D<double>& M,
+	const size_t* rowsStarredCol,
+	const bool* colCovered,
+	const bool* rowCovered,
+	const size_t* rowsPrimedCol
+) {
+	m_output << "\\paragraph{After step 2:}" << endl;
 
 	m_output << "\\begin{equation}" << endl;
 	m_output << "\\begin{pmatrix}" << endl;

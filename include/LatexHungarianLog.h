@@ -33,7 +33,15 @@ public:
 		const bool* colCovered
 	);
 
-	void afterStep1(
+	void afterPrime(
+		const Array2D<double>& M,
+		const size_t* rowsStarredCol,
+		const bool* colCovered,
+		const bool* rowCovered,
+		const size_t* rowsPrimedCol
+	);
+
+	void afterStep2(
 		const Array2D<double>& M,
 		const size_t* rowsStarredCol,
 		const bool* colCovered,

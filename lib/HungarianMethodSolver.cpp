@@ -25,7 +25,12 @@ HungarianMethodSolver::HungarianMethodSolver() {
 }
 
 HungarianMethodSolver::~HungarianMethodSolver() {
-
+#ifdef DEBUG
+	if(m_log != NULL) {
+		delete m_log;
+		m_log = NULL;
+	}
+#endif
 }
 
 #ifdef DEBUG
@@ -238,6 +243,13 @@ Assignment HungarianMethodSolver::operator() (const Array2D<double>& A) const {
 					colCovered[c] = colsStarredRow[c] < B.getNumRows();
 				}
 
+#ifdef DEBUG
+				if(m_log != NULL) {
+					m_log->afterStep2( 
+						B, rowsStarredCol, colCovered, rowCovered, rowsPrimedCol);
+				}
+#endif
+
 				break;
 			} else {
 				const size_t& cStar = rowsStarredCol[entry.first];
@@ -253,15 +265,15 @@ Assignment HungarianMethodSolver::operator() (const Array2D<double>& A) const {
 						zeros.push_back(Entry(r, cStar));
 					}
 				}
+#ifdef DEBUG
+				if(m_log != NULL) {
+					m_log->afterPrime( 
+						B, rowsStarredCol, colCovered, rowCovered, rowsPrimedCol);
+				}
+#endif
 			}
 		} // Repeat until all zeros covered
 
-#ifdef DEBUG
-		if(m_log != NULL) {
-			m_log->afterStep1( 
-				B, rowsStarredCol, colCovered, rowCovered, rowsPrimedCol);
-		}
-#endif
 		if(didStep2) {
 			continue;
 		}

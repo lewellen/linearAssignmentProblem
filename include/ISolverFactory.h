@@ -9,7 +9,6 @@ using std::string;
 
 class ISolverFactory {
 public:
-	static const string SOLVER_ALTERNATIVE;
 	static const string SOLVER_ATRANDOM;
 	static const string SOLVER_BRUTE;
 	static const string SOLVER_GREEDY_EFFICIENT;
