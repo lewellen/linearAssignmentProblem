@@ -5,16 +5,12 @@
 
 #include "Array2D.h"
 #include "Assignment.h"
-
 #include "IInputFormat.h"
 #include "IInputFormatFactory.h"
-
 #include "IOutputFormat.h"
 #include "IOutputFormatFactory.h"
-
 #include "IObjective.h"
 #include "IObjectiveFactory.h"
-
 #include "ISolver.h"
 #include "ISolverFactory.h"
 

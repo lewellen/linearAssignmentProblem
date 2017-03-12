@@ -26,6 +26,10 @@ Assignment NaiveGreedySolver::operator() (const Array2D<double>& A) const {
 		
 	Array2DMask M(A.getNumRows(), A.getNumCols());
 
+	if(m_log != NULL) {
+		m_log->input(A);
+	}
+
 	for(size_t i = 0; i < A.getNumRows(); ++i) {
 		double min = numeric_limits<double>::infinity();
 		size_t minRow = 0;
@@ -45,6 +49,14 @@ Assignment NaiveGreedySolver::operator() (const Array2D<double>& A) const {
 		assignment[ minRow ] = minCol;
 		M.erase(0, minRow);
 		M.erase(1, minCol);
+
+		if(m_log != NULL) {
+			m_log->afterAssignment(A, assignment, minRow, minCol);
+		}
+	}
+
+	if(m_log != NULL) {
+		m_log->output(A, assignment);
 	}
 
 	return assignment;

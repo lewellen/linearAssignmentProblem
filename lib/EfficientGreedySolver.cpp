@@ -72,6 +72,10 @@ Assignment EfficientGreedySolver::operator() (const Array2D<double>& A) const {
 
 	Assignment assignment(A.getNumRows());
 
+	if(m_log != NULL) {
+		m_log->input(A);
+	}
+
 	const size_t nodesSize = A.getNumRows() * A.getNumCols();
 	QNode* nodes[nodesSize];
 
@@ -127,6 +131,9 @@ Assignment EfficientGreedySolver::operator() (const Array2D<double>& A) const {
 	QNode* cursor = nodes[0];
 	while(cursor != NULL) {
 		assignment[ cursor->row ] = cursor->col;
+		if(m_log != NULL) {
+			m_log->afterAssignment(A, assignment, cursor->row, cursor->col);
+		}
 
 		QNode* nextCursor = cursor->next;
 
@@ -186,6 +193,10 @@ Assignment EfficientGreedySolver::operator() (const Array2D<double>& A) const {
 		}
 
 		cursor = nextCursor;
+	}
+
+	if(m_log != NULL) {
+		m_log->output(A, assignment);
 	}
 
 	return assignment;

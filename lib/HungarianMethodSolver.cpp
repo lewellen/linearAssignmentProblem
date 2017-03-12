@@ -6,12 +6,9 @@
 #include "Array2D.h"
 #include "Array2DMask.h"
 #include "Assignment.h"
+#include "IHungarianLog.h"
 #include "ISolver.h"
 #include "HungarianMethodSolver.h"
-
-#ifdef DEBUG
-#include "IHungarianLog.h"
-#endif
 
 using std::cout;
 using std::endl;
@@ -19,25 +16,28 @@ using std::list;
 using std::numeric_limits;
 
 HungarianMethodSolver::HungarianMethodSolver() {
-#ifdef DEBUG
 	m_log = NULL;
-#endif
 }
 
 HungarianMethodSolver::~HungarianMethodSolver() {
-#ifdef DEBUG
 	if(m_log != NULL) {
 		delete m_log;
 		m_log = NULL;
 	}
-#endif
 }
 
-#ifdef DEBUG
 void HungarianMethodSolver::setLog(IHungarianLog* log) {
+	if(log == m_log) {
+		return;
+	}
+
+	if(m_log != NULL) {
+		delete m_log;
+		m_log = NULL;
+	}
+
 	m_log = log;
 }
-#endif
 
 Assignment HungarianMethodSolver::operator() (const Array2D<double>& A) const {
 	// Munkres, J. Algorithms for the Assignment and Transportation Problems.
@@ -47,11 +47,10 @@ Assignment HungarianMethodSolver::operator() (const Array2D<double>& A) const {
 	assert(A.getNumRows() == A.getNumCols());
 
 	Array2D<double> B = A;
-#ifdef DEBUG
+
 	if(m_log != NULL) {
 		m_log->input(B);
 	}
-#endif
 
 	// A_{i, j} = A_{i, j} - min_k A_{i, k} for all (i, j)
 	for(size_t row = 0; row < B.getNumRows(); ++row) {
@@ -85,11 +84,9 @@ Assignment HungarianMethodSolver::operator() (const Array2D<double>& A) const {
 		}
 	}
 
-#ifdef DEBUG
 	if(m_log != NULL) {
 		m_log->afterDeductRowAndColMin(B);
 	}
-#endif
 
 	// Keep tabs on which rows and columns are covered
 	bool rowCovered[B.getNumRows()];
@@ -156,11 +153,9 @@ Assignment HungarianMethodSolver::operator() (const Array2D<double>& A) const {
 		}
 	}
 
-#ifdef DEBUG
 	if(m_log != NULL) {
 		m_log->afterInitAssignment(B, rowsStarredCol, colCovered);
 	}
-#endif
 
 	while( numStarredZeros < B.getNumRows() ) {
 		bool didStep2 = false;
@@ -204,13 +199,11 @@ Assignment HungarianMethodSolver::operator() (const Array2D<double>& A) const {
 					isPrime = !isPrime;
 				} while(--maxAttempts > 0);
 
-#ifdef DEBUG
 				if(m_log != NULL) {
 					m_log->beforeStep2(
 						B, rowsStarredCol, colCovered, rowCovered, 
 						rowsPrimedCol, starred, primed); 
 				}
-#endif
 
 				// All starred zeros in the sequence become unstarred.
 				for(list<Entry>::iterator i = starred.begin(); i != starred.end(); ++i) {
@@ -243,12 +236,10 @@ Assignment HungarianMethodSolver::operator() (const Array2D<double>& A) const {
 					colCovered[c] = colsStarredRow[c] < B.getNumRows();
 				}
 
-#ifdef DEBUG
 				if(m_log != NULL) {
 					m_log->afterStep2( 
 						B, rowsStarredCol, colCovered, rowCovered, rowsPrimedCol);
 				}
-#endif
 
 				break;
 			} else {
@@ -265,12 +256,11 @@ Assignment HungarianMethodSolver::operator() (const Array2D<double>& A) const {
 						zeros.push_back(Entry(r, cStar));
 					}
 				}
-#ifdef DEBUG
+
 				if(m_log != NULL) {
 					m_log->afterPrime( 
 						B, rowsStarredCol, colCovered, rowCovered, rowsPrimedCol);
 				}
-#endif
 			}
 		} // Repeat until all zeros covered
 
@@ -323,14 +313,13 @@ Assignment HungarianMethodSolver::operator() (const Array2D<double>& A) const {
 				}
 			}
 		}
-#ifdef DEBUG
+
 		if(m_log != NULL) {
 			m_log->afterDeductUncoveredMin(
 				B, rowsStarredCol, colCovered, rowCovered,
 				rowsPrimedCol, minValue
 			);
 		}
-#endif
 	}
 
 	Assignment assignment(A.getNumRows());
@@ -338,11 +327,9 @@ Assignment HungarianMethodSolver::operator() (const Array2D<double>& A) const {
 		assignment[row] = rowsStarredCol[row];
 	}
 
-#ifdef DEBUG
 	if(m_log != NULL) {
 		m_log->output(A, assignment);
 	}
-#endif
 
 	return assignment;
 }

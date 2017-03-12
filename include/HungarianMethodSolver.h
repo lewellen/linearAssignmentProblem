@@ -5,11 +5,8 @@
 
 #include "Array2D.h"
 #include "Assignment.h"
-#include "ISolver.h"
-
-#ifdef DEBUG
 #include "IHungarianLog.h" 
-#endif
+#include "ISolver.h"
 
 using std::list;
 
@@ -20,12 +17,10 @@ public:
 
 	Assignment operator() (const Array2D<double>& M) const; 
 
-#ifdef DEBUG
-public:
 	void setLog(IHungarianLog* log);
+
 private:
 	IHungarianLog* m_log;
-#endif
 };
 
 #endif

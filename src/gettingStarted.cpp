@@ -27,7 +27,7 @@ CostMatrix randomMatrix(size_t size) {
 int main(int argc, char** argv) {
 	CostMatrix M = randomMatrix(12);
 
-	ISolver* solver = ISolverFactory::make(ISolverFactory::SOLVER_BRUTE);
+	ISolver* solver = ISolverFactory::make(ISolverFactory::SOLVER_HUNGARIAN);
 	assert(solver != NULL);
 
 	Assignment jobsByWorker = (*solver)(M);

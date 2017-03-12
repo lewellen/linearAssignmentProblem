@@ -46,10 +46,14 @@ int main(int argc, char** argv) {
 			continue;
 		}
 
+		if(solverName == ISolverFactory::SOLVER_BRUTE) {
+			continue;
+		}
+
 		ISolver* solver = ISolverFactory::make(solverName);
 		assert(solver != NULL);
 
-		for(size_t size = 2; size <= 12; ++size) {
+		for(size_t size = 2; size <= 512; size *= 2) {
 			SampledValue& samples = profile[size][solverName];
 
 			Stopwatch R;
@@ -83,11 +87,15 @@ int main(int argc, char** argv) {
 	}
 	cout << endl;
 
-	for(size_t size = 2; size <= 12; ++size) {
+	for(size_t size = 2; size <= 512; size *= 2) {
 		cout << size << "\t";
 		for(size_t solverIndex = 0; solverIndex < numSolvers; ++solverIndex) {
 			const string& solverName = solverNames[solverIndex];
 			if(solverName == ISolverFactory::SOLVER_ATRANDOM) {
+				continue;
+			}
+
+			if(solverName == ISolverFactory::SOLVER_BRUTE) {
 				continue;
 			}
 

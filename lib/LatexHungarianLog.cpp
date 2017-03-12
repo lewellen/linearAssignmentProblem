@@ -7,7 +7,6 @@
 #include "Assignment.h"
 #include "LatexHungarianLog.h"
 
-using std::cout;
 using std::endl;
 using std::list;
 using std::ostream;
@@ -53,9 +52,9 @@ void LatexHungarianLog::input(
 		}
 
 		if(row + 1 != M.getNumRows()) {
-			cout << " \\\\";
+			m_output << " \\\\";
 		}
-		cout << endl;
+		m_output << endl;
 	}
 
 	m_output << "\\end{pmatrix}" << endl;
@@ -89,9 +88,9 @@ void LatexHungarianLog::afterDeductRowAndColMin(
 		}
 
 		if(row + 1 != M.getNumRows()) {
-			cout << " \\\\";
+			m_output << " \\\\";
 		}
-		cout << endl;
+		m_output << endl;
 	}
 
 	m_output << "\\end{pmatrix}" << endl;
@@ -145,9 +144,9 @@ void LatexHungarianLog::afterInitAssignment(
 		}
 
 		if(row + 1 != M.getNumRows()) {
-			cout << " \\\\";
+			m_output << " \\\\";
 		}
-		cout << endl;
+		m_output << endl;
 	}
 
 	m_output << "\\end{pmatrix}" << endl;
@@ -206,9 +205,9 @@ void LatexHungarianLog::afterPrime(
 		}
 
 		if(row + 1 != M.getNumRows()) {
-			cout << " \\\\";
+			m_output << " \\\\";
 		}
-		cout << endl;
+		m_output << endl;
 	}
 
 	m_output << "\\end{pmatrix}" << endl;
@@ -267,9 +266,9 @@ void LatexHungarianLog::afterStep2(
 		}
 
 		if(row + 1 != M.getNumRows()) {
-			cout << " \\\\";
+			m_output << " \\\\";
 		}
-		cout << endl;
+		m_output << endl;
 	}
 
 	m_output << "\\end{pmatrix}" << endl;
@@ -373,9 +372,9 @@ void LatexHungarianLog::afterDeductUncoveredMin(
 		}
 
 		if(row + 1 != M.getNumRows()) {
-			cout << " \\\\";
+			m_output << " \\\\";
 		}
-		cout << endl;
+		m_output << endl;
 	}
 
 	m_output << "\\end{pmatrix}" << endl;
@@ -411,9 +410,9 @@ void LatexHungarianLog::output(
 		}
 
 		if(row + 1 != M.getNumRows()) {
-			cout << " \\\\";
+			m_output << " \\\\";
 		}
-		cout << endl;
+		m_output << endl;
 	}
 
 	m_output << "\\end{pmatrix}" << endl;
