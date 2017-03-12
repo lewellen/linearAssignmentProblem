@@ -11,6 +11,7 @@
 #include "IObjectiveFactory.h"
 #include "ISolver.h"
 #include "ISolverFactory.h"
+#include "RandomMatrix.h"
 #include "SampledValue.h"
 #include "Stopwatch.h"
 
@@ -19,21 +20,6 @@ using std::endl;
 using std::list;
 using std::map;
 using std::pair;
-
-typedef Array2D<double> CostMatrix;
-
-CostMatrix randomMatrix(size_t size) {
-	CostMatrix M(size);
-
-	// Initialize random cost matrix
-	for(size_t row = 0; row < M.getNumRows(); ++row) {
-		for(size_t col = 0; col < M.getNumCols(); ++col) {
-			M.getEntry(row, col) = (rand() % 100) + 5;
-		}
-	}
-
-	return M;
-}
 
 int main(int argc, char** argv) {
 	map<size_t, map<string, SampledValue> > profile;
@@ -50,12 +36,12 @@ int main(int argc, char** argv) {
 	for(size_t size = sizeMin; size <= sizeMax; ++size) {
 		bool repeat = true;
 		while(repeat) {
-			CostMatrix M = randomMatrix(size);
+			RandomMatrix M = RandomMatrix(size, size);
 			Assignment bruteMinA = (*brute)(M);
 			double bruteMinACost = bruteMinA.cost(M);
 
 			IObjective* maxObj = IObjectiveFactory::make(IObjectiveFactory::OBJECTIVE_MAXIMIZE);
-			CostMatrix N = M;
+			Array2D<double> N = M;
 			(*maxObj)(N);
 			delete maxObj;
 

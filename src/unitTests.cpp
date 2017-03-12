@@ -2,15 +2,12 @@
 #include <iostream>
 
 #include "Array.h"
-
 #include "Array2D.h"
 #include "Assignment.h"
 #include "ISolver.h"
 #include "ISolverFactory.h"
-
 #include "IInputFormat.h"
 #include "IInputFormatFactory.h"
-
 #include "IOutputFormat.h"
 #include "IOutputFormatFactory.h"
 
@@ -25,8 +22,6 @@ using std::endl;
 #define PASS cout << "PASS\t" << __FUNCTION__ << endl;
 
 #define RUN(x) if(x) { PASS; } else { FAIL; }
-
-typedef Array2D<double> CostMatrix;
 
 bool testArray() {
 	Array<double> A(4);
@@ -65,7 +60,7 @@ bool testArray2DCopyConstructor() {
 	return true;
 }
 
-bool testSolve(const CostMatrix& M, const Assignment& expected, const string& solverName) {
+bool testSolve(const Array2D<double>& M, const Assignment& expected, const string& solverName) {
 	ISolver* solver = ISolverFactory::make(solverName);
 	Assignment actual = (*solver)(M);
 	delete solver;
@@ -80,7 +75,7 @@ bool testSolve(const CostMatrix& M, const Assignment& expected, const string& so
 
 void testBruteMethodSolve() {
 	// http://www.hungarianalgorithm.com/examplehungarianalgorithm.php
-	CostMatrix M(4, 4);
+	Array2D<double> M(4, 4);
 
 	M.getEntry(0, 0) = 82;
 	M.getEntry(0, 1) = 83;
@@ -113,7 +108,7 @@ void testBruteMethodSolve() {
 
 void testHungarianMethodSolveEasy() {
 	// Combinatorial Optimization pg. 252
-	CostMatrix M(5, 5);
+	Array2D<double> M(5, 5);
 
 	M.getEntry(0, 0) = 7;
 	M.getEntry(0, 1) = 2;

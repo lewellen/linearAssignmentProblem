@@ -20,8 +20,6 @@ using std::ifstream;
 using std::numeric_limits;
 using std::ofstream;
 
-typedef Array2D<double> CostMatrix;
-
 #define FLAGS \
 	X(E_INPUT, "--input") \
 	X(E_INPUT_FORMAT, "--input-format") \
