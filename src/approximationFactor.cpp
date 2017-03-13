@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
 	cout << endl;
 
 
-	for(size_t size = sizeMin; size <= sizeMax; size += 5) {
+	for(size_t size = sizeMin; size <= sizeMax; size *= 2) {
 		for(size_t sample = 0; sample < numSamples; ++sample) {
 			RandomMatrix M = RandomMatrix(size, size);
 			Assignment baselineMinA = (*baseline)(M);

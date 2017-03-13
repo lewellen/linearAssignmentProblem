@@ -6,6 +6,8 @@
 
 \newgeometry{margin=1.25in}
 
+\newcommand{\boundedBy}[1]{\mathcal{O}\left(#1\right)}
+
 \begin{document}
 
 \author{Garrett Lewellen}
@@ -15,13 +17,7 @@
 
 \section{Introduction}
 
-Simplex method
-
-Hungerian algorithm - Kuhn, Munkres, Karp/Edmonds; Konig, Es-something
-
-Auction algorithm - Parallel
-
-Cavity method - Statistical mechanics?
+\paragraph{} Solutions to the the Linear Assignment Problem (LAP) are perfect minimum weighted bipartite matching between two sets. \cite{} explored the problem in terms of workers and tasks whereby each worker is assigned to a unique task such that the overall cost of workers performing tasks is minimized. Beyond the originally investigated application, the LAP appears in coregistration \cite{},  X \cite{}, and Y \cite{}. \cite{} Originally proposed a $\boundedBy{n^4}$ algorithm to be performed by clerks by hand, and later \cite{} developed a $\boundedBy{n^3}$ algorithm meant to be carried out by computers. Further research explores parallel algorithms such as the auction algorithm, \cite{} and algorithms based on statistical mechanics such as the cavity method \cite{}. Here we investigate a greedy $\alpha$-approximation algorithm for the problem whose runtime is $\boundedBy{n^2 \log n}$. Derivation of the algorithm's approximation factor will be given with empircal evaluation against the Hungarian method.
 
 \section{Outline of Algorithm}
 
@@ -79,5 +75,19 @@ Inner loop analysis showing that you end up doing $O(n^2)$ work -- $n$ on the ou
 \section{Evaluation}
 
 \section{Conclusion}
+
+\begin{figure}
+	\centering
+	\caption{Approximation factor}
+	\input{obj/approximationFactor.tex}
+	\label{fig:approximationFactor}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\caption{Runtime}
+	\input{obj/runtime.tex}
+	\label{fig:runtime}
+\end{figure}
 
 \end{document}

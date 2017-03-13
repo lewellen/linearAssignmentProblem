@@ -9,7 +9,7 @@ RandomMatrix::RandomMatrix(size_t rows, size_t cols) : Array2D<double>(rows, col
 
 	for(size_t row = 0; row < getNumRows(); ++row) {
 		for(size_t col = 0; col < getNumCols(); ++col) {
-			getEntry(row, col) = (rand() % N) + 1;
+			getEntry(row, col) = (rand() % 100) + 1;
 			//getEntry(row, col) = rand() / RAND_MAX;
 		}
 	}

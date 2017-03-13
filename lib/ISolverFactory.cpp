@@ -11,8 +11,8 @@
 
 const string ISolverFactory::SOLVER_ATRANDOM = "RANDOM";
 const string ISolverFactory::SOLVER_BRUTE = "BRUTE";
-const string ISolverFactory::SOLVER_GREEDY_EFFICIENT = "GREEDY_EFFICIENT";
-const string ISolverFactory::SOLVER_GREEDY_NAIVE = "GREEDY_NAIVE";
+const string ISolverFactory::SOLVER_GREEDY_EFFICIENT = "GREEDY-EFFICIENT";
+const string ISolverFactory::SOLVER_GREEDY_NAIVE = "GREEDY-NAIVE";
 const string ISolverFactory::SOLVER_HUNGARIAN = "HUNGARIAN";
 
 bool ISolverFactory::isValidName(const string& name) {

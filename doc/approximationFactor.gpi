@@ -1,12 +1,9 @@
 set xlabel 'Workers/Tasks, $n$'
-set ylabel 'Elapsed time (sec)'
-
-set logscale xy
-set format xy '$10^{%L}$'
+set ylabel 'Approximation Factor, $\alpha$'
 
 set key top left
 
-set terminal epslatex color
+set terminal epslatex color 
 set output argOutput
 
 plot for [i=2:4] argInput using 1:i with lines lw 2 title columnheader(i) 
