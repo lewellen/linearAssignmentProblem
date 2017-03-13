@@ -1,14 +1,16 @@
 #include <algorithm>
 #include <cassert>
 #include <limits>
+#include <stack>
 
 #include "Array2D.h"
 #include "Assignment.h"
 #include "BruteSolver.h"
 #include "ISolver.h"
 
-using std::swap;
 using std::numeric_limits;
+using std::stack;
+using std::swap;
 
 BruteSolver::BruteSolver() {
 
@@ -34,15 +36,62 @@ Assignment BruteSolver::operator() (const Array2D<double>& M) const {
 	return minAssign;
 }
 
+struct StackEntry {
+	size_t n;
+	size_t i;
+	bool first;
+
+	StackEntry(size_t n, size_t i, bool first) {
+		this->n = n;
+		this->i = i;
+		this->first = first;
+	}
+};
+
 void BruteSolver::permutation(
-	Assignment& A, size_t n,
+	Assignment& A, size_t N,
 	const Array2D<double>& M, double& minCost, Assignment& minAssign) const {
 
 	// Decided to use Heap's algorithm instead of mine (mine used two linked 
 	// lists representing unused objects, the other a permutation being built
 	// by the call stack; Heap's uses half the storage and vectors are 
-	// contiguous - hence better cache performance - so more preferrable.)
+	// contiguous so better locality.)
+	//
+	// Modified Heap's algorithm to be iterative rather than recursive.
 
+	stack< StackEntry > S;
+	S.push( StackEntry(N, 0, true) );
+
+	while(!S.empty()) {
+		StackEntry& p = S.top();
+		if(p.n == 1) {
+			double cost = A.cost(M);
+			if(minCost > cost) {
+				minCost = cost;
+				minAssign = A;
+			}
+			S.pop();	
+		} else {
+			if(p.first) {
+				p.first = false;
+				S.push( StackEntry(p.n - 1, 0, true) );
+			} else {
+				if(p.n % 2 == 0) {	
+					swap(A[p.i], A[p.n - 1]);
+				} else {
+					swap(A[0], A[p.n - 1]);
+				}
+
+				if(++p.i == p.n) {
+					S.pop();
+				} else {
+					S.push( StackEntry(p.n - 1, 0, true) );
+				}
+			}
+		}
+	}
+
+	/*
 	if( n == 1 ) {
 		double cost = A.cost(M);
 		if(minCost > cost) {
@@ -62,4 +111,5 @@ void BruteSolver::permutation(
 			}
 		}
 	}
+	*/
 }

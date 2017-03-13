@@ -32,7 +32,7 @@ int main(int argc, char** argv) {
 
 	const size_t sizeMin = 2;
 	const size_t sizeMax = 512;
-	const size_t numSamples = 10;
+	const size_t numSamples = 60;
 
 	cout << "size " << baselineName << "_MIN" << " " << baselineName << "_MAX" << " ";
 	for(size_t solverIndex = 0; solverIndex < numSolvers; ++solverIndex) {
@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
 	cout << endl;
 
 
-	for(size_t size = sizeMin; size <= sizeMax; size *= 2) {
+	for(size_t size = sizeMin; size <= sizeMax; size += 10) {
 		for(size_t sample = 0; sample < numSamples; ++sample) {
 			RandomMatrix M = RandomMatrix(size, size);
 			Assignment baselineMinA = (*baseline)(M);

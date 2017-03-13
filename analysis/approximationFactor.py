@@ -26,6 +26,7 @@ if __name__ == '__main__':
 		solvers.remove('size')
 		solvers.remove('HUNGARIAN_MIN')
 		solvers.remove('HUNGARIAN_MAX')
+		solvers.remove('RANDOM')
 		solvers.remove('')
 
 		alphaBySizeSolver = {}
@@ -39,8 +40,8 @@ if __name__ == '__main__':
 			for solver in solvers:
 				cost = float(row[solver])
 				#alphaBySizeSolver[size][solver].append( cost )
-				alphaBySizeSolver[size][solver].append( cost / minCost )
-				#alphaBySizeSolver[size][solver].append( (cost - minCost) / (maxCost - minCost) )
+				#alphaBySizeSolver[size][solver].append( cost / minCost )
+				alphaBySizeSolver[size][solver].append( (cost - minCost) / (maxCost - minCost) )
 
 
 	print("size "),

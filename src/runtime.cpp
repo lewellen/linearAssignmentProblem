@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
 
 	const size_t sizeMin = 2;
 	const size_t sizeMax = 512;
-	const size_t numSamples = 10;
+	const size_t numSamples = 60;
 
 	cout << "size ";
 	for(size_t solverIndex = 0; solverIndex < numSolvers; ++solverIndex) {
@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
 
 			for(size_t solverIndex = 0; solverIndex < numSolvers; ++solverIndex) {
 				const string& solverName = solverNames[solverIndex];
-				if(!excludeSolver(solverName)) {	
+				if(!excludeSolver(solverName)) {
 					ISolver* solver = ISolverFactory::make(solverName);
 					assert(solver != NULL);
 
