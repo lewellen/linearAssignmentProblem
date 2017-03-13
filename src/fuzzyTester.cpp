@@ -155,7 +155,7 @@ public:
 				cout << FlagNames[E_SOLVER_BASE] << " " << m_flags[E_SOLVER_BASE] << " is not a valid option." << endl;
 				return false;
 			}
-			s.setUnderTestSolver(m_flags[E_SOLVER_BASE]);
+			s.setBaselineSolver(m_flags[E_SOLVER_BASE]);
 		}
 
 		if(!m_flags[E_SOLVER_TEST].empty()) {

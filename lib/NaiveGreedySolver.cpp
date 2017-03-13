@@ -46,13 +46,13 @@ Assignment NaiveGreedySolver::operator() (const Array2D<double>& A) const {
 			}
 		}
 
-		assignment[ minRow ] = minCol;
-		M.erase(0, minRow);
-		M.erase(1, minCol);
-
 		if(m_log != NULL) {
 			m_log->afterAssignment(A, assignment, minRow, minCol);
 		}
+
+		assignment[ minRow ] = minCol;
+		M.erase(0, minRow);
+		M.erase(1, minCol);
 	}
 
 	if(m_log != NULL) {

@@ -58,25 +58,26 @@ Inner loop analysis showing that you end up doing $O(n^2)$ work -- $n$ on the ou
 	\sum_{k = 1}^{n} 2k - 1 = 2 \frac{n (n + 1)}{2} - n = n^2
 \end{equation}
 
+\paragraph{TODO:}
+
+\begin{enumerate}
+	\item Referencing the people who came up with $\pi^2/6$ for $n \to \infty$ on iid exp(1) values
+	\item Derive what the expected minimum should be for:
+	\begin{enumerate}
+		\item At random- Identify probability distribution and/or technique for figuring out the expected sum of picking $n^2$ iid rvs out of $n^2$
+		\item Greedy heuristic - Think you'll want to look at the expected minimum out of $n^2$ iid rvs; then take the sum of that over $i = 1 \cdots n$
+	\end{enumerate}
+	\item After doing the above, then you should be able to make a claim that $\alpha$ ( approx cost / optimal cost ) should trend towards $[1.05, 1.10]$; use plot you put together to verify empirically. 
+	\item Decide if it is worthwhile to look at normalized approx cost (approx cost - optimal min cost) / (optimal max cost - optimal min cost). Zero means an algorithm is picking the optimal cost; One means it is antagonistically picking the worst cost (the maximum); and that 1/2 is picking at random.
+	\item Discuss how on the greedy heuristic you could end up with different results based on ties. (ie there exists a minimum value, but it appears multiple times in the matrix- which you choose impacts the overall outcome. May lead to another greedy impl with back tracking.)
+	\item Runtime comparison of the naive, efficient, and hungarian methods
+
+	\item Decide if this paper is enough to stand on its own, or if it should be part of the GPS trajectory tracking project.
+
+\end{enumerate}
+
 \section{Evaluation}
 
 \section{Conclusion}
-\begin{equation}
-\begin{pmatrix}
-93 & 96 & 87 & \fbox{25} & 103 & 45\\
-96 & 102 & 59 & 31 & 72 & \fbox{37}\\
-100 & 69 & 73 & 36 & \fbox{50} & 36\\
-82 & 46 & \fbox{21} & 78 & 77 & 39\\
-92 & \fbox{40} & 72 & 33 & 77 & 45\\
-\fbox{39} & 12 & 32 & 68 & 79 & 77
-\end{pmatrix}
-\end{equation}
-
-
-
-
-
-
-
 
 \end{document}

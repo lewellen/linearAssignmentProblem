@@ -130,10 +130,11 @@ Assignment EfficientGreedySolver::operator() (const Array2D<double>& A) const {
 
 	QNode* cursor = nodes[0];
 	while(cursor != NULL) {
-		assignment[ cursor->row ] = cursor->col;
 		if(m_log != NULL) {
 			m_log->afterAssignment(A, assignment, cursor->row, cursor->col);
 		}
+
+		assignment[ cursor->row ] = cursor->col;
 
 		QNode* nextCursor = cursor->next;
 

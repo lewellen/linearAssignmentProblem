@@ -1,119 +1,68 @@
-#include <cmath>
 #include <cstdlib>
 #include <iostream>
-#include <list>
 #include <map>
-#include <utility>
+#include <string>
 
-#include "Array2D.h"
-#include "Assignment.h"
 #include "ISolver.h"
 #include "ISolverFactory.h"
-#include "SampledValue.h"
+#include "RandomMatrix.h"
 #include "Stopwatch.h"
 
 using std::cout;
 using std::endl;
-using std::list;
 using std::map;
-using std::pair;
+using std::string;
 
-typedef Array2D<double> CostMatrix;
-
-CostMatrix randomMatrix(size_t size) {
-	CostMatrix M(size);
-
-	// Initialize random cost matrix
-	for(size_t row = 0; row < M.getNumRows(); ++row) {
-		for(size_t col = 0; col < M.getNumCols(); ++col) {
-			M.getEntry(row, col) = (rand() % 100) + 5;
-		}
-	}
-
-	return M;
+bool excludeSolver(const string& solverName) {
+	return 
+		(solverName == ISolverFactory::SOLVER_BRUTE) ||
+		(solverName == ISolverFactory::SOLVER_ATRANDOM);
 }
 
 int main(int argc, char** argv) {
-	Stopwatch S;
-
-	map<size_t, map<string, SampledValue > > profile;
+	map<size_t, map<string, Stopwatch> > timers;
 
 	size_t numSolvers;
 	const string* solverNames = ISolverFactory::getValidNames(numSolvers);
+
+	const size_t sizeMin = 2;
+	const size_t sizeMax = 512;
+	const size_t numSamples = 10;
+
+	cout << "size ";
 	for(size_t solverIndex = 0; solverIndex < numSolvers; ++solverIndex) {
 		const string& solverName = solverNames[solverIndex];
-		if(solverName == ISolverFactory::SOLVER_ATRANDOM) {
-			continue;
-		}
-
-		if(solverName == ISolverFactory::SOLVER_BRUTE) {
-			continue;
-		}
-
-		ISolver* solver = ISolverFactory::make(solverName);
-		assert(solver != NULL);
-
-		for(size_t size = 2; size <= 512; size *= 2) {
-			SampledValue& samples = profile[size][solverName];
-
-			Stopwatch R;
-			R.start();
-			do {
-				CostMatrix M = randomMatrix(size);
-				S.start();
-				Assignment jobsByWorker = (*solver)(M);
-				S.stop();
-			
-				samples.add( S.elapsedMs() );
-
-				R.stop();
-			} while(R.elapsedMs() < 1 * 60 * 1000 && samples.numSamples() < 30 ); 
-		}
-
-		delete solver;	
-	}
-
-	cout << "N\t";
-	for(size_t solverIndex = 0; solverIndex < numSolvers; ++solverIndex) {
-		const string& solverName = solverNames[solverIndex];
-		if(solverName == ISolverFactory::SOLVER_ATRANDOM) {
-			continue;
-		}
-
-		cout << solverName << "\tstdDev";
-		if(solverIndex + 1 != numSolvers) {
-			cout << "\t";
+		if(!excludeSolver(solverName)) {
+			cout << solverName << " ";
 		}
 	}
 	cout << endl;
 
-	for(size_t size = 2; size <= 512; size *= 2) {
-		cout << size << "\t";
-		for(size_t solverIndex = 0; solverIndex < numSolvers; ++solverIndex) {
-			const string& solverName = solverNames[solverIndex];
-			if(solverName == ISolverFactory::SOLVER_ATRANDOM) {
-				continue;
+	for(size_t size = sizeMin; size <= sizeMax; size += 5) {
+		for(size_t sample = 0; sample < numSamples; ++sample) {
+			RandomMatrix M = RandomMatrix(size, size);
+
+			cout << size << " ";
+
+			for(size_t solverIndex = 0; solverIndex < numSolvers; ++solverIndex) {
+				const string& solverName = solverNames[solverIndex];
+				if(!excludeSolver(solverName)) {	
+					ISolver* solver = ISolverFactory::make(solverName);
+					assert(solver != NULL);
+
+					Stopwatch S;
+					S.start();
+					Assignment solverA = (*solver)(M);
+					S.stop();
+
+					cout << S.elapsedSec() << " ";
+
+					delete solver;
+				}
 			}
 
-			if(solverName == ISolverFactory::SOLVER_BRUTE) {
-				continue;
-			}
-
-			double average = 0;
-			double stdev = 0;
-
-			const SampledValue& samples = profile[size][solverName];
-			if(!samples.empty()) {
-				average = samples.sampleMean();
-				stdev = samples.sampleStandardDev();
-			}
-
-			cout << average << "\t" << stdev;
-			if(solverIndex + 1 != numSolvers) {
-				cout << "\t";
-			}
-		}
-		cout << endl;
+			cout << endl;
+		} 
 	}
 
 	return EXIT_SUCCESS;

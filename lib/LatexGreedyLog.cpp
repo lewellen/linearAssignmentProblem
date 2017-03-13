@@ -68,34 +68,43 @@ void LatexGreedyLog::afterAssignment(
 	m_output << "\\begin{equation}" << endl;
 	m_output << "\\begin{pmatrix}" << endl;
 
+	bool rowCovered[M.getNumRows()] { false };
+	bool colCovered[M.getNumCols()] { false };
+
 	for(size_t row = 0; row < M.getNumRows(); ++row) {
-		size_t assignedCol = A[row];
+		rowCovered[row] = A[row] < M.getNumRows();
+		if(rowCovered[row]) {
+			colCovered[A[row]] = true;
+		}
+	}
+
+	for(size_t row = 0; row < M.getNumRows(); ++row) {
 		for(size_t col = 0; col < M.getNumCols(); ++col) {
 			const double& value = M.getEntry(row, col);
 
-			if(col == minCol || row == minRow) {
+			if(rowCovered[row] || colCovered[col]) {
 				m_output << "\\colorbox{yellow}{";
 			}
 
-			if(col == minCol && row == minRow) {
-				m_output << "\\textbf{";
+			if(row == minRow && col == minCol) {
+				m_output << "\\textcolor{red}{";
 			}
 
-			if(col == assignedCol) {
+			if(col == A[row]) {
 				m_output << "\\fbox{";
 			}
 
 			m_output << value;
 
-			if(col == assignedCol) {
+			if(col == A[row]) {
 				m_output << "}";
 			}
 
-			if(col == minCol && row == minRow) {
+			if(row == minRow && col == minCol) {
 				m_output << "}";
 			}
 
-			if(col == minCol || row == minRow) {
+			if(rowCovered[row] || colCovered[col]) {
 				m_output << "}";
 			}
 
@@ -112,7 +121,6 @@ void LatexGreedyLog::afterAssignment(
 
 	m_output << "\\end{pmatrix}" << endl;
 	m_output << "\\end{equation}" << endl;
-
 }
 
 void LatexGreedyLog::output(
@@ -124,16 +132,35 @@ void LatexGreedyLog::output(
 	m_output << "\\begin{equation}" << endl;
 	m_output << "\\begin{pmatrix}" << endl;
 
+	bool rowCovered[M.getNumRows()] { false };
+	bool colCovered[M.getNumCols()] { false };
+
+	for(size_t row = 0; row < M.getNumRows(); ++row) {
+		rowCovered[row] = A[row] < M.getNumRows();
+		if(rowCovered[row]) {
+			colCovered[A[row]] = true;
+		}
+	}
+
 	for(size_t row = 0; row < M.getNumRows(); ++row) {
 		for(size_t col = 0; col < M.getNumCols(); ++col) {
 			const double& value = M.getEntry(row, col);
-			if(A[row] == col) {
+
+			if(rowCovered[row] || colCovered[col]) {
+				m_output << "\\colorbox{yellow}{";
+			}
+
+			if(col == A[row]) {
 				m_output << "\\fbox{";
 			}
 
 			m_output << value;
 
-			if(A[row] == col) {
+			if(col == A[row]) {
+				m_output << "}";
+			}
+
+			if(rowCovered[row] || colCovered[col]) {
 				m_output << "}";
 			}
 

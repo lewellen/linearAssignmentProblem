@@ -10,7 +10,7 @@ public:
 
 	void start(); 
 	void stop(); 
-	double elapsedMs() const; 
+	double elapsedSec() const; 
 
 private:
 	timeval m_start;

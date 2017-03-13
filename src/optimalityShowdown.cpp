@@ -12,7 +12,6 @@
 #include "ISolver.h"
 #include "ISolverFactory.h"
 #include "RandomMatrix.h"
-#include "SampledValue.h"
 #include "Stopwatch.h"
 
 using std::cout;
@@ -22,115 +21,78 @@ using std::map;
 using std::pair;
 
 int main(int argc, char** argv) {
-	map<size_t, map<string, SampledValue> > profile;
 	map<size_t, map<string, Stopwatch> > timers;
 
 	size_t numSolvers;
 	const string* solverNames = ISolverFactory::getValidNames(numSolvers);
 
-	ISolver* brute = ISolverFactory::make(ISolverFactory::SOLVER_BRUTE);
+	const string& baselineName = ISolverFactory::SOLVER_HUNGARIAN;
+	ISolver* baseline = ISolverFactory::make(baselineName);
+	assert(baseline != NULL);
 
-	size_t sizeMin = 2;
-	size_t sizeMax = 10;
+	const size_t sizeMin = 2;
+	const size_t sizeMax = 512;
+	const size_t numSamples = 10;
 
-	for(size_t size = sizeMin; size <= sizeMax; ++size) {
-		bool repeat = true;
-		while(repeat) {
+	cout << "size " << baselineName << "_MIN" << " " << baselineName << "_MAX" << " ";
+	for(size_t solverIndex = 0; solverIndex < numSolvers; ++solverIndex) {
+		const string& solverName = solverNames[solverIndex];
+		if(
+			(solverName == ISolverFactory::SOLVER_BRUTE) ||
+			(solverName == baselineName) 
+		) {
+			continue;
+		}
+		cout << solverName << " ";
+	}
+	cout << endl;
+
+
+	for(size_t size = sizeMin; size <= sizeMax; size += 5) {
+		for(size_t sample = 0; sample < numSamples; ++sample) {
 			RandomMatrix M = RandomMatrix(size, size);
-			Assignment bruteMinA = (*brute)(M);
-			double bruteMinACost = bruteMinA.cost(M);
+			Assignment baselineMinA = (*baseline)(M);
+			double baselineMinACost = baselineMinA.cost(M);
 
 			IObjective* maxObj = IObjectiveFactory::make(IObjectiveFactory::OBJECTIVE_MAXIMIZE);
 			Array2D<double> N = M;
 			(*maxObj)(N);
 			delete maxObj;
 
-			Assignment bruteMaxA = (*brute)(N);
-			double bruteMaxACost = bruteMaxA.cost(M);
+			Assignment baselineMaxA = (*baseline)(N);
+			double baselineMaxACost = baselineMaxA.cost(M);
 
-			if(bruteMinACost == bruteMaxACost) {
+			if(baselineMinACost == baselineMaxACost) {
 				continue;
 			}
 
-			assert(bruteMaxACost > bruteMinACost);
+			cout << size << " " << baselineMinACost << " " << baselineMaxACost << " ";
 
-			repeat = false;
 			for(size_t solverIndex = 0; solverIndex < numSolvers; ++solverIndex) {
 				const string& solverName = solverNames[solverIndex];
-				if(solverName == ISolverFactory::SOLVER_BRUTE) {
+				if(
+					(solverName == ISolverFactory::SOLVER_BRUTE) ||
+					(solverName == baselineName) 
+				) {
 					continue;
 				}
-
-				SampledValue& samples = profile[size][solverName];
-				if(samples.numSamples() >= 60) {
-					continue;
-				}
-
-				Stopwatch& R = timers[size][solverName];
-				if(samples.numSamples() == 0) {
-					R.start();
-				} else {
-					R.stop();
-				}
-
-				if(R.elapsedMs() >= 0.5 * 60 * 1000) {
-					continue;
-				}
-		
+	
 				ISolver* solver = ISolverFactory::make(solverName);
 				assert(solver != NULL);
 
 				Assignment solverA = (*solver)(M);
 				double solverACost = solverA.cost(M);
 
-				samples.add( (solverACost - bruteMinACost) / (bruteMaxACost - bruteMinACost) );	
+				cout << solverACost << " ";
+
 				delete solver;
-				repeat = true;
 			}
+
+			cout << endl;
 		} 
 	}
 
-	delete brute;
-
-	cout << "N\t";
-	for(size_t solverIndex = 0; solverIndex < numSolvers; ++solverIndex) {
-		const string& solverName = solverNames[solverIndex];
-		if(solverName == ISolverFactory::SOLVER_BRUTE) {
-			continue;
-		}
-
-		cout << solverName << "\tstdDev";
-		if(solverIndex + 1 != numSolvers) {
-			cout << "\t";
-		}
-	}
-	cout << endl;
-
-	for(size_t size = sizeMin; size <= sizeMax; ++size) {
-		cout << size << "\t";
-		for(size_t solverIndex = 0; solverIndex < numSolvers; ++solverIndex) {
-			const string& solverName = solverNames[solverIndex];
-			if(solverName == ISolverFactory::SOLVER_BRUTE) {
-				continue;
-			}
-
-			double average = 0;
-			double stdev = 0;
-
-			const SampledValue& samples = profile[size][solverName];
-			//assert(!samples.empty());
-			if(!samples.empty()) {
-				average = samples.sampleMean();
-				stdev = samples.sampleStandardDev();
-			}
-
-			cout << average << "\t" << stdev;
-			if(solverIndex + 1 != numSolvers) {
-				cout << "\t";
-			}
-		}
-		cout << endl;
-	}
+	delete baseline;
 
 	return EXIT_SUCCESS;
 }
