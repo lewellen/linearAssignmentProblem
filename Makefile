@@ -12,19 +12,6 @@ all: $(bins)
 bin/document.pdf: doc/document.tex | bin
 	pdflatex --output-directory=bin doc/document.tex
 
-error.png: obj/error.dat src/error.gpi
-	gnuplot src/error.gpi
-
-obj/error.dat: bin/optimalityShowdown
-	bin/optimalityShowdown > obj/error.dat
-
-
-runtime.png: obj/runtime.dat src/runtime.gpi
-	gnuplot src/runtime.gpi
-
-obj/runtime.dat: bin/runtimeProfile
-	bin/runtimeProfile > obj/runtime.dat
-
 bin/%: obj/src/%.o obj/lib.o | bin
 	$(cppTool) $(cppFlaggs) obj/lib.o $< -o $@
 

@@ -418,4 +418,5 @@ void LatexHungarianLog::output(
 	m_output << "\\end{pmatrix}" << endl;
 	m_output << "\\end{equation}" << endl;
 
+	m_output << "Cost: " << A.cost(M) << endl;
 }
