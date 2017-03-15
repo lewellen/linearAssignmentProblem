@@ -11,6 +11,9 @@ import csv
 import sys
 import operator
 
+import numpy
+from scipy import stats
+
 if __name__ == '__main__':
 	if (len(sys.argv) < 2):
 		print("%s <file>" % sys.argv[0])
@@ -24,9 +27,8 @@ if __name__ == '__main__':
 
 		solvers += inputReader.fieldnames
 		solvers.remove('size')
-		solvers.remove('HUNGARIAN_MIN')
-		solvers.remove('HUNGARIAN_MAX')
 		solvers.remove('RANDOM')
+		solvers.remove('HUNGARIAN')
 		solvers.remove('')
 
 		alphaBySizeSolver = {}
@@ -35,25 +37,28 @@ if __name__ == '__main__':
 			if not size in alphaBySizeSolver:
 				alphaBySizeSolver[size] = { solver : [] for solver in solvers };
  
-			minCost = float(row['HUNGARIAN_MIN'])
-			maxCost = float(row['HUNGARIAN_MAX'])
+			minCost = float(row['HUNGARIAN'])
 			for solver in solvers:
 				cost = float(row[solver])
 				#alphaBySizeSolver[size][solver].append( cost )
-				#alphaBySizeSolver[size][solver].append( cost / minCost )
-				alphaBySizeSolver[size][solver].append( (cost - minCost) / (maxCost - minCost) )
+				alphaBySizeSolver[size][solver].append( cost / minCost )
+				#alphaBySizeSolver[size][solver].append( (cost - minCost) / (maxCost - minCost) )
 
 
 	print("size "),
 	for solver in solvers:
-		print("%s " % solver),
+		print("%s %s-CILB %s-CIUB" % (solver, solver, solver)),
 	print("")
 	
 	sortedSizes = sorted(alphaBySizeSolver.keys())
 	for size in sortedSizes:
 		print size,
 		for solver in solvers:
-			xs = alphaBySizeSolver[size][solver]
-			smu = sum(xs) / float(len(xs))
-			print("%f " % smu),
+			xs = numpy.array( alphaBySizeSolver[size][solver] )
+
+			sampleMean = numpy.mean(xs)
+			sampleStd = numpy.std(xs)
+			confInt = stats.norm.interval(0.95, sampleMean, sampleStd)
+
+			print("%f %f %f" % (sampleMean, confInt[0], confInt[1])),
 		print("")

@@ -1,11 +1,15 @@
 set xlabel 'Workers/Tasks, $n$'
 set ylabel 'Approximation Factor, $\alpha$'
 
-set key top left
+set logscale x
+
+set key bottom right
+
+set style fill solid 0.2
 
 set terminal epslatex color 
 set output argOutput
 
-plot for [i=2:4] argInput using 1:i with lines lw 2 title columnheader(i) 
+plot for [i=3:6:3] argInput using 1:i:i+1 with filledcu lc i + 1 notitle, for [i=2:6:3] argInput using 1:i with lines lw 3 lc i + 2 title columnheader(i) 
 
 set output

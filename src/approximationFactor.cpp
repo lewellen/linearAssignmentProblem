@@ -1,98 +1,73 @@
-#include <cmath>
 #include <cstdlib>
 #include <iostream>
-#include <list>
-#include <map>
-#include <utility>
+#include <string>
 
 #include "Array2D.h"
 #include "Assignment.h"
-#include "IObjective.h"
-#include "IObjectiveFactory.h"
 #include "ISolver.h"
 #include "ISolverFactory.h"
-#include "RandomMatrix.h"
-#include "Stopwatch.h"
+#include "ParallelDataGatherer.h"
 
 using std::cout;
 using std::endl;
-using std::list;
-using std::map;
-using std::pair;
+using std::ostream;
+using std::string;
+
+class CostParallelDataGatherer : public ParallelDataGatherer {
+public:
+
+protected:
+	bool excludeSolver(const string& name) {
+		return 
+			(name == ISolverFactory::SOLVER_BRUTE);
+	}
+
+	void onHeaderStart(ostream& ss) {
+		ss << "size ";
+	}
+
+	void onHeaderSolver(ostream& ss, const string& name) {
+		ss << name << " ";
+	}
+
+	void onHeaderEnd(ostream& ss) {
+		ss << endl;
+	}
+
+	void onSampleStart(ostream& ss, const Array2D<double>& M) {
+		ss << M.getNumRows() << " ";
+	}
+
+	void onSolverStart(ostream& ss, const Array2D<double>& M, ISolver& solver) {
+		Assignment solverA = solver(M);
+		double solverACost = solverA.cost(M);
+		ss << solverACost << " ";
+	}
+
+	void onSampleEnd(ostream& ss) {
+		ss << endl;
+	}
+};
 
 int main(int argc, char** argv) {
-	map<size_t, map<string, Stopwatch> > timers;
+	CostParallelDataGatherer g;
 
-	size_t numSolvers;
-	const string* solverNames = ISolverFactory::getValidNames(numSolvers);
+	SharedData shared;
+	shared.solverNames = ISolverFactory::getValidNames(shared.numSolvers);
+	shared.sizeMin = 1;
+	shared.sizeMax = 1000;
+	shared.coutLock = 0;
 
-	const string& baselineName = ISolverFactory::SOLVER_HUNGARIAN;
-	ISolver* baseline = ISolverFactory::make(baselineName);
-	assert(baseline != NULL);
+	const size_t numTasks = g.getNumLogicalProcessors();
+	const size_t samplesPerTask = 15;
 
-	const size_t sizeMin = 2;
-	const size_t sizeMax = 512;
-	const size_t numSamples = 60;
-
-	cout << "size " << baselineName << "_MIN" << " " << baselineName << "_MAX" << " ";
-	for(size_t solverIndex = 0; solverIndex < numSolvers; ++solverIndex) {
-		const string& solverName = solverNames[solverIndex];
-		if(
-			(solverName == ISolverFactory::SOLVER_BRUTE) ||
-			(solverName == baselineName) 
-		) {
-			continue;
-		}
-		cout << solverName << " ";
-	}
-	cout << endl;
-
-
-	for(size_t size = sizeMin; size <= sizeMax; size += 10) {
-		for(size_t sample = 0; sample < numSamples; ++sample) {
-			RandomMatrix M = RandomMatrix(size, size);
-			Assignment baselineMinA = (*baseline)(M);
-			double baselineMinACost = baselineMinA.cost(M);
-
-			IObjective* maxObj = IObjectiveFactory::make(IObjectiveFactory::OBJECTIVE_MAXIMIZE);
-			Array2D<double> N = M;
-			(*maxObj)(N);
-			delete maxObj;
-
-			Assignment baselineMaxA = (*baseline)(N);
-			double baselineMaxACost = baselineMaxA.cost(M);
-
-			if(baselineMinACost == baselineMaxACost) {
-				continue;
-			}
-
-			cout << size << " " << baselineMinACost << " " << baselineMaxACost << " ";
-
-			for(size_t solverIndex = 0; solverIndex < numSolvers; ++solverIndex) {
-				const string& solverName = solverNames[solverIndex];
-				if(
-					(solverName == ISolverFactory::SOLVER_BRUTE) ||
-					(solverName == baselineName) 
-				) {
-					continue;
-				}
-	
-				ISolver* solver = ISolverFactory::make(solverName);
-				assert(solver != NULL);
-
-				Assignment solverA = (*solver)(M);
-				double solverACost = solverA.cost(M);
-
-				cout << solverACost << " ";
-
-				delete solver;
-			}
-
-			cout << endl;
-		} 
+	Task tasks[numTasks];
+	for(size_t i = 0; i < numTasks; ++i) {
+		tasks[i].numSamples = samplesPerTask;
+		tasks[i].shared = &shared;
 	}
 
-	delete baseline;
+	g.run(tasks, numTasks);	
 
 	return EXIT_SUCCESS;
 }

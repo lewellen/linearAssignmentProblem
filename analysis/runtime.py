@@ -10,6 +10,9 @@ import csv
 import sys
 import operator
 
+import numpy
+from scipy import stats
+
 if __name__ == '__main__':
 	if (len(sys.argv) < 2):
 		print("%s <file>" % sys.argv[0])
@@ -38,14 +41,18 @@ if __name__ == '__main__':
 
 	print("size "),
 	for solver in solvers:
-		print("%s " % solver),
+		print("%s %s-CILB %s-CIUB" % (solver, solver, solver)),
 	print("")
 	
 	sortedSizes = sorted(runtimeBySizeSolver.keys())
 	for size in sortedSizes:
 		print size,
 		for solver in solvers:
-			xs = runtimeBySizeSolver[size][solver]
-			smu = sum(xs) / float(len(xs))
-			print("%f " % smu),
+			xs = numpy.array( runtimeBySizeSolver[size][solver] )
+
+			sampleMean = numpy.mean(xs)
+			sampleStd = numpy.std(xs)
+			confInt = stats.norm.interval(0.95, sampleMean, sampleStd)
+
+			print("%f %f %f" % (sampleMean, confInt[0], confInt[1])),
 		print("")

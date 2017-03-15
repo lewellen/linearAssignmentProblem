@@ -62,25 +62,41 @@ void BruteSolver::permutation(
 	stack< StackEntry > S;
 	S.push( StackEntry(N, 0, true) );
 
+	double costs[M.getNumRows()] { 0.0 };
+	double cost = 0;
+
+	for(size_t row = 0; row < M.getNumRows(); ++row) {
+		costs[row] = M.getEntry( row, A[row] );
+		cost += costs[row];	
+	}
+
 	while(!S.empty()) {
 		StackEntry& p = S.top();
 		if(p.n == 1) {
-			double cost = A.cost(M);
 			if(minCost > cost) {
 				minCost = cost;
 				minAssign = A;
 			}
-			S.pop();	
+			S.pop();
 		} else {
 			if(p.first) {
 				p.first = false;
 				S.push( StackEntry(p.n - 1, 0, true) );
 			} else {
-				if(p.n % 2 == 0) {	
-					swap(A[p.i], A[p.n - 1]);
-				} else {
-					swap(A[0], A[p.n - 1]);
+				size_t from = 0;
+				if(p.n % 2 == 0) {
+					from = p.i;
 				}
+
+ 				swap(A[from], A[p.n - 1]);
+
+				cost -= costs[from];
+				costs[from] = M.getEntry(from, A[from]);
+				cost += costs[from];
+
+				cost -= costs[p.n - 1];
+				costs[p.n - 1] = M.getEntry(p.n - 1, A[p.n - 1]);
+				cost += costs[p.n-1];
 
 				if(++p.i == p.n) {
 					S.pop();
