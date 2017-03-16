@@ -231,7 +231,7 @@ int main(int argc, char** argv) {
 		Assignment underTestA = (*underTest)(M);
 		double underTestCost = underTestA.cost(M);
 
-		if( baselineCost != underTestCost ) {
+		if( baselineCost != underTestCost) {
 			if(s.getUnderTestSolver() == ISolverFactory::SOLVER_HUNGARIAN) {
 				HungarianMethodSolver* h = dynamic_cast<HungarianMethodSolver*>(underTest);
 				assert(h != NULL);

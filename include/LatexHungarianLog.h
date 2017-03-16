@@ -75,6 +75,16 @@ public:
 
 private:
 	ostream& m_output;
+
+	void renderTikzMatrix(
+		const Array2D<double>& M,
+		const bool* colCovered,
+		const bool* rowCovered,
+		const size_t* rowsStarredCol,
+		const size_t* rowsPrimedCol,
+		const list< pair<size_t, size_t> >& starred,
+		const list< pair<size_t, size_t> >& primed
+	);
 };
 
 #endif
