@@ -18,6 +18,8 @@ LatexHungarianLog::LatexHungarianLog(ostream& output) : m_output(output) {
 	m_output << "\\usepackage{xcolor}" << endl;
 	m_output << "\\usepackage{tikz}" << endl;
 	m_output << "\\usetikzlibrary{matrix}" << endl;
+	m_output << "\\usepackage{geometry}" << endl;
+	m_output << "\\newgeometry{margin=1.25in}" << endl;
 	m_output << "\\begin{document}" << endl;
 }
 
@@ -30,7 +32,7 @@ void LatexHungarianLog::input(
 ) {
 	m_output << "\\section{}" << endl;
 
-	m_output << "\\paragraph{Input:}" << endl;
+	//m_output << "\\paragraph{Input:}" << endl;
 
 	bool colCovered[M.getNumCols()] { false };
 	bool rowCovered[M.getNumRows()] { false };
@@ -58,7 +60,7 @@ void LatexHungarianLog::input(
 void LatexHungarianLog::afterDeductRowAndColMin(
 	const Array2D<double>& M
 ) {
-	m_output << "\\paragraph{After deducting row and col minimums:}" << endl;
+	//m_output << "\\paragraph{After deducting row and col minimums:}" << endl;
 
 	bool colCovered[M.getNumCols()] { false };
 	bool rowCovered[M.getNumRows()] { false };
@@ -88,7 +90,7 @@ void LatexHungarianLog::afterInitAssignment(
 	const size_t* rowsStarredCol, 
 	const bool* colCovered
 ) {
-	m_output << "\\paragraph{After init assignment:}" << endl;
+	//m_output << "\\paragraph{After init assignment:}" << endl;
 
 	bool rowCovered[M.getNumRows()] { false };
 
@@ -114,7 +116,7 @@ void LatexHungarianLog::afterPrime(
 	const bool* rowCovered,
 	const size_t* rowsPrimedCol
 ) {
-	m_output << "\\paragraph{After priming:}" << endl;
+	//m_output << "\\paragraph{After priming:}" << endl;
 
 	list< pair<size_t, size_t> > starred, primed;
 
@@ -133,7 +135,7 @@ void LatexHungarianLog::afterStep2(
 	const bool* rowCovered,
 	const size_t* rowsPrimedCol
 ) {
-	m_output << "\\paragraph{After step 2:}" << endl;
+	//m_output << "\\paragraph{After step 2:}" << endl;
 
 	list< pair<size_t, size_t> > starred, primed;
 
@@ -154,7 +156,7 @@ void LatexHungarianLog::beforeStep2(
 	const list< pair<size_t, size_t> >& starred,
 	const list< pair<size_t, size_t> >& primed
 ) {
-	m_output << "\\paragraph{Before step 2:}" << endl;
+	///m_output << "\\paragraph{Before step 2:}" << endl;
 
 	renderTikzMatrix(
 		M, 
@@ -173,7 +175,7 @@ void LatexHungarianLog::afterDeductUncoveredMin(
 	const size_t* rowsPrimedCol,
 	const double& minValue
 ) {
-	m_output << "\\paragraph{After deduct uncovered min:}" << endl;
+	//m_output << "\\paragraph{After deduct uncovered min:}" << endl;
 
 	list< pair<size_t, size_t> > starred, primed;
 
@@ -189,9 +191,9 @@ void LatexHungarianLog::output(
 	const Array2D<double>& M,
 	const Assignment& A
 ) {
-	m_output << "\\paragraph{Output:}" << endl;
+	//m_output << "\\paragraph{Output:}" << endl;
 
-	m_output << "\\begin{center}" << endl;
+	//m_output << "\\begin{center}" << endl;
 	m_output << "\\begin{tikzpicture}" << endl;
 	m_output << "\\matrix (M)[";
 	m_output << "matrix of math nodes, ";
@@ -226,9 +228,9 @@ void LatexHungarianLog::output(
 	m_output << "};" << endl;
 
 	m_output << "\\end{tikzpicture}" << endl;
-	m_output << "\\end{center}" << endl;
+	//m_output << "\\end{center}" << endl;
 
-	m_output << "Cost: " << A.cost(M) << endl;
+	//m_output << "Cost: " << A.cost(M) << endl;
 }
 
 void LatexHungarianLog::renderTikzMatrix(
@@ -240,7 +242,7 @@ void LatexHungarianLog::renderTikzMatrix(
 	const list< pair<size_t, size_t> >& starred,
 	const list< pair<size_t, size_t> >& primed
 ) {
-	m_output << "\\begin{center}" << endl;
+	//m_output << "\\begin{center}" << endl;
 	m_output << "\\begin{tikzpicture}" << endl;
 	m_output << "\\matrix (M)[";
 	m_output << "matrix of math nodes, ";
@@ -371,6 +373,6 @@ void LatexHungarianLog::renderTikzMatrix(
 	}
 
 	m_output << "\\end{tikzpicture}" << endl;
-	m_output << "\\end{center}" << endl;
+	//m_output << "\\end{center}" << endl;
 }
 

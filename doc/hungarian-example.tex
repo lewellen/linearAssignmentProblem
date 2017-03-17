@@ -1,0 +1,248 @@
+\begin{tikzpicture}
+\matrix (M)[matrix of math nodes, column sep=-\pgflinewidth, row sep=-\pgflinewidth, left delimiter={(}, right delimiter={)}, nodes={anchor=center, align=center, minimum height=0.55cm, text width=0.55cm}] {
+68 & 35 & 37 & 10 & 47 & 31 \\
+10 & 70 & 26 & 52 & 58 & 74 \\
+71 & 59 & 86 & 65 & 84 & 40 \\
+65 & 87 & 53 & 4 & 69 & 77 \\
+33 & 28 & 31 & 68 & 67 & 38 \\
+5 & 34 & 72 & 93 & 95 & 18 \\
+};
+\end{tikzpicture}
+
+&
+
+\begin{tikzpicture}
+\matrix (M)[matrix of math nodes, column sep=-\pgflinewidth, row sep=-\pgflinewidth, left delimiter={(}, right delimiter={)}, nodes={anchor=center, align=center, minimum height=0.55cm, text width=0.55cm}] {
+58 & 25 & 24 & \textbf{0} & \textbf{0} & 21 \\
+\textbf{0} & 60 & 13 & 42 & 11 & 64 \\
+31 & 19 & 43 & 25 & 7 & \textbf{0} \\
+61 & 83 & 46 & \textbf{0} & 28 & 73 \\
+5 & \textbf{0} & \textbf{0} & 40 & 2 & 10 \\
+\textbf{0} & 29 & 64 & 88 & 53 & 13 \\
+};
+\end{tikzpicture}
+
+&
+
+\begin{tikzpicture}
+\matrix (M)[matrix of math nodes, column sep=-\pgflinewidth, row sep=-\pgflinewidth, left delimiter={(}, right delimiter={)}, nodes={anchor=center, align=center, minimum height=0.55cm, text width=0.55cm}] {
+58 & 25 & 24 & \textcolor{red}{\textbf{0}} & \textbf{0} & 21 \\
+\textcolor{red}{\textbf{0}} & 60 & 13 & 42 & 11 & 64 \\
+31 & 19 & 43 & 25 & 7 & \textcolor{red}{\textbf{0}} \\
+61 & 83 & 46 & \textbf{0} & 28 & 73 \\
+5 & \textcolor{red}{\textbf{0}} & \textbf{0} & 40 & 2 & 10 \\
+\textbf{0} & 29 & 64 & 88 & 53 & 13 \\
+};
+\draw[black] (M-1-1.north) -- (M-6-1.south);
+\draw[black] (M-1-2.north) -- (M-6-2.south);
+\draw[black] (M-1-4.north) -- (M-6-4.south);
+\draw[black] (M-1-6.north) -- (M-6-6.south);
+\end{tikzpicture}
+
+\\
+
+Input cost matrix
+
+&
+
+Deduct row, then resulting column minimums
+
+&
+
+Cover columns of starred entries
+
+\\
+
+\begin{tikzpicture}
+\matrix (M)[matrix of math nodes, column sep=-\pgflinewidth, row sep=-\pgflinewidth, left delimiter={(}, right delimiter={)}, nodes={anchor=center, align=center, minimum height=0.55cm, text width=0.55cm}] {
+58 & 25 & 24 & \textcolor{red}{\textbf{0}} & \textcolor{green}{\textbf{0}} & 21 \\
+\textcolor{red}{\textbf{0}} & 60 & 13 & 42 & 11 & 64 \\
+31 & 19 & 43 & 25 & 7 & \textcolor{red}{\textbf{0}} \\
+61 & 83 & 46 & \textbf{0} & 28 & 73 \\
+5 & \textcolor{red}{\textbf{0}} & \textbf{0} & 40 & 2 & 10 \\
+\textbf{0} & 29 & 64 & 88 & 53 & 13 \\
+};
+\draw[black] (M-1-1.west) -- (M-1-6.east);
+\draw[black] (M-1-1.north) -- (M-6-1.south);
+\draw[black] (M-1-2.north) -- (M-6-2.south);
+\draw[black] (M-1-6.north) -- (M-6-6.south);
+\end{tikzpicture}
+
+&
+
+\begin{tikzpicture}
+\matrix (M)[matrix of math nodes, column sep=-\pgflinewidth, row sep=-\pgflinewidth, left delimiter={(}, right delimiter={)}, nodes={anchor=center, align=center, minimum height=0.55cm, text width=0.55cm}] {
+58 & 25 & 24 & \textcolor{red}{\textbf{0}} & \textcolor{green}{\textbf{0}} & 21 \\
+\textcolor{red}{\textbf{0}} & 60 & 13 & 42 & 11 & 64 \\
+31 & 19 & 43 & 25 & 7 & \textcolor{red}{\textbf{0}} \\
+61 & 83 & 46 & \textcolor{green}{\textbf{0}} & 28 & 73 \\
+5 & \textcolor{red}{\textbf{0}} & \textbf{0} & 40 & 2 & 10 \\
+\textbf{0} & 29 & 64 & 88 & 53 & 13 \\
+};
+\draw[black] (M-1-1.west) -- (M-1-6.east);
+\draw[black] (M-1-1.north) -- (M-6-1.south);
+\draw[black] (M-1-2.north) -- (M-6-2.south);
+\draw[black] (M-1-6.north) -- (M-6-6.south);
+\draw[blue, ultra thick] (M-4-4.center) -- (M-1-4.center);
+\draw[blue, ultra thick] (M-1-4.center) -- (M-1-5.center);
+\end{tikzpicture}
+
+&
+
+\begin{tikzpicture}
+\matrix (M)[matrix of math nodes, column sep=-\pgflinewidth, row sep=-\pgflinewidth, left delimiter={(}, right delimiter={)}, nodes={anchor=center, align=center, minimum height=0.55cm, text width=0.55cm}] {
+58 & 25 & 24 & \textbf{0} & \textcolor{red}{\textbf{0}} & 21 \\
+\textcolor{red}{\textbf{0}} & 60 & 13 & 42 & 11 & 64 \\
+31 & 19 & 43 & 25 & 7 & \textcolor{red}{\textbf{0}} \\
+61 & 83 & 46 & \textcolor{red}{\textbf{0}} & 28 & 73 \\
+5 & \textcolor{red}{\textbf{0}} & \textbf{0} & 40 & 2 & 10 \\
+\textbf{0} & 29 & 64 & 88 & 53 & 13 \\
+};
+\draw[black] (M-1-1.north) -- (M-6-1.south);
+\draw[black] (M-1-2.north) -- (M-6-2.south);
+\draw[black] (M-1-4.north) -- (M-6-4.south);
+\draw[black] (M-1-5.north) -- (M-6-5.south);
+\draw[black] (M-1-6.north) -- (M-6-6.south);
+\end{tikzpicture}
+
+\\
+
+Starred zero at $(1, 4)$, prime $(1, 5)$
+
+&
+
+No starred zero in row $4$, prime $(4, 4)$ and find augmented path
+
+&
+
+Unstar starred entries and star prime entries along path
+
+\\
+
+\begin{tikzpicture}
+\matrix (M)[matrix of math nodes, column sep=-\pgflinewidth, row sep=-\pgflinewidth, left delimiter={(}, right delimiter={)}, nodes={anchor=center, align=center, minimum height=0.55cm, text width=0.55cm}] {
+58 & 25 & 24 & \textbf{0} & \textcolor{red}{\textbf{0}} & 21 \\
+\textcolor{red}{\textbf{0}} & 60 & 13 & 42 & 11 & 64 \\
+31 & 19 & 43 & 25 & 7 & \textcolor{red}{\textbf{0}} \\
+61 & 83 & 46 & \textcolor{red}{\textbf{0}} & 28 & 73 \\
+5 & \textcolor{red}{\textbf{0}} & \textcolor{green}{\textbf{0}} & 40 & 2 & 10 \\
+\textbf{0} & 29 & 64 & 88 & 53 & 13 \\
+};
+\draw[black] (M-5-1.west) -- (M-5-6.east);
+\draw[black] (M-1-1.north) -- (M-6-1.south);
+\draw[black] (M-1-4.north) -- (M-6-4.south);
+\draw[black] (M-1-5.north) -- (M-6-5.south);
+\draw[black] (M-1-6.north) -- (M-6-6.south);
+\end{tikzpicture}
+
+&
+
+\begin{tikzpicture}
+\matrix (M)[matrix of math nodes, column sep=-\pgflinewidth, row sep=-\pgflinewidth, left delimiter={(}, right delimiter={)}, nodes={anchor=center, align=center, minimum height=0.55cm, text width=0.55cm}] {
+58 & 12 & 11 & \textbf{0} & \textcolor{red}{\textbf{0}} & 21 \\
+\textcolor{red}{\textbf{0}} & 47 & \textbf{0} & 42 & 11 & 64 \\
+31 & 6 & 30 & 25 & 7 & \textcolor{red}{\textbf{0}} \\
+61 & 70 & 33 & \textcolor{red}{\textbf{0}} & 28 & 73 \\
+18 & \textcolor{red}{\textbf{0}} & \textcolor{green}{\textbf{0}} & 53 & 15 & 23 \\
+\textbf{0} & 16 & 51 & 88 & 53 & 13 \\
+};
+\draw[black] (M-5-1.west) -- (M-5-6.east);
+\draw[black] (M-1-1.north) -- (M-6-1.south);
+\draw[black] (M-1-4.north) -- (M-6-4.south);
+\draw[black] (M-1-5.north) -- (M-6-5.south);
+\draw[black] (M-1-6.north) -- (M-6-6.south);
+\end{tikzpicture}
+
+&
+
+\begin{tikzpicture}
+\matrix (M)[matrix of math nodes, column sep=-\pgflinewidth, row sep=-\pgflinewidth, left delimiter={(}, right delimiter={)}, nodes={anchor=center, align=center, minimum height=0.55cm, text width=0.55cm}] {
+58 & 12 & 11 & \textbf{0} & \textcolor{red}{\textbf{0}} & 21 \\
+\textcolor{red}{\textbf{0}} & 47 & \textcolor{green}{\textbf{0}} & 42 & 11 & 64 \\
+31 & 6 & 30 & 25 & 7 & \textcolor{red}{\textbf{0}} \\
+61 & 70 & 33 & \textcolor{red}{\textbf{0}} & 28 & 73 \\
+18 & \textcolor{red}{\textbf{0}} & \textcolor{green}{\textbf{0}} & 53 & 15 & 23 \\
+\textbf{0} & 16 & 51 & 88 & 53 & 13 \\
+};
+\draw[black] (M-2-1.west) -- (M-2-6.east);
+\draw[black] (M-5-1.west) -- (M-5-6.east);
+\draw[black] (M-1-4.north) -- (M-6-4.south);
+\draw[black] (M-1-5.north) -- (M-6-5.south);
+\draw[black] (M-1-6.north) -- (M-6-6.south);
+\end{tikzpicture}
+
+\\
+
+Starred zero at $(5, 1)$, prime $(5, 3)$
+
+&
+
+No uncovered zeros, deduct uncovered minimum and it to double covered entries
+
+&
+
+Starred zero at $(2, 1)$, prime $(2, 3)$
+
+\\
+
+\begin{tikzpicture}
+\matrix (M)[matrix of math nodes, column sep=-\pgflinewidth, row sep=-\pgflinewidth, left delimiter={(}, right delimiter={)}, nodes={anchor=center, align=center, minimum height=0.55cm, text width=0.55cm}] {
+58 & 12 & 11 & \textbf{0} & \textcolor{red}{\textbf{0}} & 21 \\
+\textcolor{red}{\textbf{0}} & 47 & \textcolor{green}{\textbf{0}} & 42 & 11 & 64 \\
+31 & 6 & 30 & 25 & 7 & \textcolor{red}{\textbf{0}} \\
+61 & 70 & 33 & \textcolor{red}{\textbf{0}} & 28 & 73 \\
+18 & \textcolor{red}{\textbf{0}} & \textcolor{green}{\textbf{0}} & 53 & 15 & 23 \\
+\textcolor{green}{\textbf{0}} & 16 & 51 & 88 & 53 & 13 \\
+};
+\draw[black] (M-2-1.west) -- (M-2-6.east);
+\draw[black] (M-5-1.west) -- (M-5-6.east);
+\draw[black] (M-1-4.north) -- (M-6-4.south);
+\draw[black] (M-1-5.north) -- (M-6-5.south);
+\draw[black] (M-1-6.north) -- (M-6-6.south);
+\draw[blue, ultra thick] (M-6-1.center) -- (M-2-1.center);
+\draw[blue, ultra thick] (M-2-1.center) -- (M-2-3.center);
+\end{tikzpicture}
+
+&
+
+\begin{tikzpicture}
+\matrix (M)[matrix of math nodes, column sep=-\pgflinewidth, row sep=-\pgflinewidth, left delimiter={(}, right delimiter={)}, nodes={anchor=center, align=center, minimum height=0.55cm, text width=0.55cm}] {
+58 & 12 & 11 & \textbf{0} & \textcolor{red}{\textbf{0}} & 21 \\
+\textbf{0} & 47 & \textcolor{red}{\textbf{0}} & 42 & 11 & 64 \\
+31 & 6 & 30 & 25 & 7 & \textcolor{red}{\textbf{0}} \\
+61 & 70 & 33 & \textcolor{red}{\textbf{0}} & 28 & 73 \\
+18 & \textcolor{red}{\textbf{0}} & \textbf{0} & 53 & 15 & 23 \\
+\textcolor{red}{\textbf{0}} & 16 & 51 & 88 & 53 & 13 \\
+};
+\draw[black] (M-1-1.north) -- (M-6-1.south);
+\draw[black] (M-1-2.north) -- (M-6-2.south);
+\draw[black] (M-1-3.north) -- (M-6-3.south);
+\draw[black] (M-1-4.north) -- (M-6-4.south);
+\draw[black] (M-1-5.north) -- (M-6-5.south);
+\draw[black] (M-1-6.north) -- (M-6-6.south);
+\end{tikzpicture}
+
+&
+
+\begin{tikzpicture}
+\matrix (M)[matrix of math nodes, column sep=-\pgflinewidth, row sep=-\pgflinewidth, left delimiter={(}, right delimiter={)}, nodes={anchor=center, align=center, minimum height=0.55cm, text width=0.55cm}] {
+68 & 35 & 37 & 10 & \fbox{47} & 31 \\
+10 & 70 & \fbox{26} & 52 & 58 & 74 \\
+71 & 59 & 86 & 65 & 84 & \fbox{40} \\
+65 & 87 & 53 & \fbox{4} & 69 & 77 \\
+33 & \fbox{28} & 31 & 68 & 67 & 38 \\
+\fbox{5} & 34 & 72 & 93 & 95 & 18 \\
+};
+\end{tikzpicture}
+\\
+
+
+No starred zero in row $6$, prime $(6, 1)$ and find augmented path
+
+&
+
+Unstar starred entries and star prime entries along path
+
+&
+
+Output cost of 150

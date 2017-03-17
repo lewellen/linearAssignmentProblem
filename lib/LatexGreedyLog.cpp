@@ -27,9 +27,9 @@ void LatexGreedyLog::input(
 
 	m_output << "\\section{}" << endl;
 
-	m_output << "\\paragraph{Input:}" << endl;
+	//m_output << "\\paragraph{Input:}" << endl;
 
-	m_output << "\\begin{center}" << endl;
+	//m_output << "\\begin{center}" << endl;
 	m_output << "\\begin{tikzpicture}" << endl;
 	m_output << "\\matrix (M)[matrix of math nodes, left delimiter={(}, right delimiter={)}] {" << endl;
 
@@ -50,7 +50,7 @@ void LatexGreedyLog::input(
 	m_output << "};" << endl;
 
 	m_output << "\\end{tikzpicture}" << endl;
-	m_output << "\\end{center}" << endl;
+	//m_output << "\\end{center}" << endl;
 } 
 
 void LatexGreedyLog::afterAssignment(
@@ -69,9 +69,9 @@ void LatexGreedyLog::afterAssignment(
 		}
 	}
 
-	m_output << "\\paragraph{Assignment:}" << endl;
+	//m_output << "\\paragraph{Assignment:}" << endl;
 
-	m_output << "\\begin{center}" << endl;
+	//m_output << "\\begin{center}" << endl;
 	m_output << "\\begin{tikzpicture}" << endl;
 	m_output << "\\matrix (M)[matrix of math nodes, left delimiter={(}, right delimiter={)}] {" << endl;
 
@@ -122,16 +122,16 @@ void LatexGreedyLog::afterAssignment(
 	}
 
 	m_output << "\\end{tikzpicture}" << endl;
-	m_output << "\\end{center}" << endl;
+	//m_output << "\\end{center}" << endl;
 }
 
 void LatexGreedyLog::output(
 	const Array2D<double>& M,
 	const Assignment& A
 ) {
-	m_output << "\\paragraph{Output:}" << endl;
+	//m_output << "\\paragraph{Output:}" << endl;
 
-	m_output << "\\begin{center}" << endl;
+	//m_output << "\\begin{center}" << endl;
 	m_output << "\\begin{tikzpicture}" << endl;
 	m_output << "\\matrix (M)[matrix of math nodes, left delimiter={(}, right delimiter={)}] {" << endl;
 
@@ -161,7 +161,7 @@ void LatexGreedyLog::output(
 	m_output << "};" << endl;
 
 	m_output << "\\end{tikzpicture}" << endl;
-	m_output << "\\end{center}" << endl;
+	//m_output << "\\end{center}" << endl;
 
 	m_output << "Cost: " << A.cost(M) << endl;
 }

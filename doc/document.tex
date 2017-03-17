@@ -1,93 +1,241 @@
 \documentclass{article}
 
-\usepackage{amsmath}
+\usepackage{amsmath, amsfonts}
+\usepackage{float}
 \usepackage{geometry}
+\usepackage{graphicx}
+\usepackage[table]{xcolor}
 \usepackage{tikz}
+\usetikzlibrary{matrix}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{multicol}
 
 \newgeometry{margin=1.25in}
 
-\newcommand{\boundedBy}[1]{\mathcal{O}\left(#1\right)}
+\newcommand{\set}[1]{\lbrace #1 \rbrace}
+\newcommand{\boundedBy}[1]{\mathcal{O} \left ( #1 \right )}
+\newcommand{\expected}[1]{\mathbb{E} \left ( #1 \right )}
+\newcommand{\exprv}[1]{\text{Exp} \left( #1 \right )}
+\newcommand{\uniformrv}[2]{\mathcal{U} \left( #1, #2 \right )}
+\newcommand{\FuncCall}[2]{\textsc{#1} \left ( #2 \right )}
 
 \begin{document}
 
 \author{Garrett Lewellen}
-\title{A Greedy Polynomial Time Approxmation Scheme for the Linear Assignment Problem}
+\title{Approxmation Algorithms for the Linear Assignment Problem}
 
 \maketitle
 
 \section{Introduction}
 
-\paragraph{} Solutions to the the Linear Assignment Problem (LAP) are perfect minimum weighted bipartite matching between two sets. \cite{} explored the problem in terms of workers and tasks whereby each worker is assigned to a unique task such that the overall cost of workers performing tasks is minimized. Beyond the originally investigated application, the LAP appears in coregistration \cite{},  X \cite{}, and Y \cite{}. \cite{} Originally proposed a $\boundedBy{n^4}$ algorithm to be performed by clerks by hand, and later \cite{} developed a $\boundedBy{n^3}$ algorithm meant to be carried out by computers. Further research explores parallel algorithms such as the auction algorithm, \cite{} and algorithms based on statistical mechanics such as the cavity method \cite{}. Here we investigate a greedy $\alpha$-approximation algorithm for the problem whose runtime is $\boundedBy{n^2 \log n}$. Derivation of the algorithm's approximation factor will be given with empircal evaluation against the Hungarian method.
+\paragraph{} The Linear Assignment Problem (LAP) is concerned with matching an equal number of workers to tasks, $n$, such that the overall cost of the pairings is minimized. A polynomial time algorithm was developed in the late fifties by \cite{kuhn1955hungarian}, and further refined by \cite{munkres1957algorithms}, called the Hungarian Method. Named so after the work of Hungarian mathematicans K{\"o}nig and Egerv{\'a}ry whose theorems in the 1930s form the basis for the method. While the Hungarian Method can solve LAP instances in $\boundedBy{n^3}$ time, we wish to find faster algorithms even if it means sacraficing optimality in the process. Here we examine a greedy $\alpha$-approximation algorithm with $\boundedBy{n^2 \log n}$ runtime. Derivation of the algorithm's approximation factor is given with empircal evaluation against the Hungarian method.
 
-\section{Outline of Algorithm}
-
-Assume an $n \times n$ cost matrix.
-
-\begin{enumerate}
-	\item Allocate continuous $n^2$ nodes
-	\item In $O(n^2)$ time link the nodes together
-	\item Sort the $n^2$ nodes in ascending value in $O(n^2 \log n)$ time
-	\item Let cursor = minimum valued node
-	\item While cursor is not NULL -- This is $O(n)$
-	\begin{enumerate}
-		\item Assign cursor job to worker
-		\item Store the next next cursor
-		\item Enqueue (cursor, nil) into Q
-		\item While( Q is not empty )  --- This is $O(2n - 1)$
-		\begin{enumerate}
-			\item Dequeue (q, a) from Q
-			\item Set q's left neighbor to point to q's right neighbor (vice versa)
-			\item Set q's top neighbor to point to q's bottom neighbor (vice versa)
-			\item If a is nil and for each present left, right, top, or bottom neighbor, enqueue (neighbor, direction)
-			\item If a is not nill, then if a is present then enqueue (neighbor, a)
-			\item Set q's previous to point to q's next (vice versa)
-			\item If cursor equals q, update next cursor to equal q's next
-			\item delete q
-		\end{enumerate}
-		\item cursor = next cursor
-	\end{enumerate}
-\end{enumerate}
-
-Inner loop analysis showing that you end up doing $O(n^2)$ work -- $n$ on the outer loop and $2n - 1$ on the inner loop.
+\section{Linear Assignment Problem}
 
 \begin{equation}
-	\sum_{k = 1}^{n} 2k - 1 = 2 \frac{n (n + 1)}{2} - n = n^2
+\begin{aligned}
+	C_n = \min & \sum_{i=1}^{n} \sum_{j=1}^{n} M_{i,j} x_{i,j} \\
+	s.t. & \sum_{i=1}^{n} x_{i,j} = 1, \quad j = 1, \ldots, n \\
+	& \sum_{j=1}^{n} x_{i,j} = 1, \quad i = 1, \dots, n
+	\label{eqn:lap}
+\end{aligned}
 \end{equation}
 
-\paragraph{TODO:}
+\paragraph{} The LAP is given by the above linear program where $M \in \mathbb{Z}_{+}^{n \times n}$ cost matrix, and $x \in \lbrace 0,1 \rbrace^{n \times n}$ assignment matrix. This is equivalent to finding a perfect matching in a weighted bipartite graph. A minimal cost may have several possible assignments, but we are only interested in finding just one. From a practical point of view, we may relax the integral constraint on $M$ and allow all positive real-valued costs. For instances where there are more jobs than workers, and vice versa, dummy entries valued greater than the existing maximum may be added. The default objective function is to minimize the cost, but the maximum cost can be found by finding the optimal assignment for $M^{\prime}_{i,j} = M_{max} - M_{i,j}$, then finding the cost relative to $M$. 
 
-\begin{enumerate}
-	\item Referencing the people who came up with $\pi^2/6$ for $n \to \infty$ on iid exp(1) values
-	\item Derive what the expected minimum should be for:
-	\begin{enumerate}
-		\item At random- Identify probability distribution and/or technique for figuring out the expected sum of picking $n^2$ iid rvs out of $n^2$
-		\item Greedy heuristic - Think you'll want to look at the expected minimum out of $n^2$ iid rvs; then take the sum of that over $i = 1 \cdots n$
-	\end{enumerate}
-	\item After doing the above, then you should be able to make a claim that $\alpha$ ( approx cost / optimal cost ) should trend towards $[1.05, 1.10]$; use plot you put together to verify empirically. 
-	\item Decide if it is worthwhile to look at normalized approx cost (approx cost - optimal min cost) / (optimal max cost - optimal min cost). Zero means an algorithm is picking the optimal cost; One means it is antagonistically picking the worst cost (the maximum); and that 1/2 is picking at random.
-	\item Discuss how on the greedy heuristic you could end up with different results based on ties. (ie there exists a minimum value, but it appears multiple times in the matrix- which you choose impacts the overall outcome. May lead to another greedy impl with back tracking.)
-	\item Runtime comparison of the naive, efficient, and hungarian methods
+\section{Algorithms}
 
-	\item Decide if this paper is enough to stand on its own, or if it should be part of the GPS trajectory tracking project.
+\paragraph{Brute Force}
 
-\end{enumerate}
+Rather than using the mathematical programming, or graph theoretic representation of the problem, we can instead view the problem as finding the assignment that minimizes the cost out of all possible assignments:
+
+\begin{equation}
+	\pi^{*} = \underset{\pi \in \Pi_n}{\arg\min} \sum_{i=1}^{n} M_{i, \pi_i}
+\end{equation}
+
+There are $n!$ such assignments which can be produced using an iterative version of Heap's algorithm \cite{heap1963permutations} in $\boundedBy{n!}$ time assuming one does differential scoring (opposed to calculating the score for each permutation which would result in an $\boundedBy{n^2 (n-1)!}$ algorithm.)
+
+\paragraph{Random}
+
+The random algorithm selects a permutation $\pi \in \Pi_n$ uniformly from the set of all possible assignment permutations in $\boundedBy{n}$ time using the Fisher-Yates shuffle \cite{durstenfeld1964algorithm}. This obviously does not produce an optimal, or near-optimal solution, but serves as a strawman to compare other results.
+
+\paragraph{Greedy}
+
+The greedy heuristic continues to cover the row and column of the smallest uncovered entry in the cost matrix until all entries are covered. The resulting set of entries then consitutes the assignment of workers to jobs. An inefficient $\boundedBy{n^3}$ algorithm can be used to find the smallest entry every iteration, or a more efficient result of $\boundedBy{n^2 \log n}$ can be obtained through the use of a sorted, array indexed hybrid mesh and queue. Let \texttt{QNode} represent a tuple consisting of row, column, and value; the previous entry in the matrix $\le$ this value, and the next entry in this matrix $\ge$ this value; and the \texttt{QNode}s (left, above, right, below) that are adjacent to this node.
+
+\begin{algorithm}
+\begin{algorithmic}
+\Procedure{Greedy}{$M$} \Comment{$n \times n$ cost matrix}
+\State $A[i] \gets \bot$ for $i = 0 \ldots n - 1$ \Comment{Assignment $A[$job$] = $ worker}
+\State $Q[i] \gets$ \texttt{QNode} for $i = 0 \ldots n^2 - 1$
+\State $\FuncCall{LinkMesh}{Q}$ \Comment{Adjacent node left, above, right, below properties}
+\State $\FuncCall{Sort}{Q}$ \Comment{Sort in ascending order by node value}
+\State $\FuncCall{LinkQueue}{Q}$ \Comment{Adjacent node previous and next properties}
+\State $Q_{min} \gets Q[0]$
+\While{$Q_{min} \neq nil$}
+	\State $A[ Q_{min} \rightarrow row ] \gets Q_{min} \rightarrow col$
+	\State $Q_{min} \gets \FuncCall{DeleteNode}{Q, Q_{min}}$ \Comment{Deletes row and col of $Q_{min}$}
+\EndWhile
+\State \textbf{return} $A$
+\EndProcedure
+\end{algorithmic}
+\caption{A greedy algorithm for the LAP.}
+\label{alg:greedy}
+\end{algorithm}
+
+\paragraph{} Allocating and linking for assignment is $\boundedBy{n}$; mesh $\boundedBy{n^2}$; queue $\boundedBy{2n^2\log n + n^2}$. Therefore initialization requires $\boundedBy{n^2 \log n}$ time. The body of the loop requires has a constant time assignment of worker to job, and $\boundedBy{2k - 1}$ time to remove the row and column from a $k \times k$ matrix using a modified depth first search. Thus the loop itself accounts for $\boundedBy{n^2}$ time. The resulting time complexity is therefore $\boundedBy{n^2 \log n} \square$.
+
+\begin{equation*}
+\quad
+\begin{pmatrix}
+62 & 31 & 79 & \fbox{6} & 21 & 37 \\
+45 & 27 & 23 & 66 & \fbox{9} & 17 \\
+83 & 59 & 25 & 38 & 63 & \fbox{25} \\
+\fbox{1} & 37 & 53 & 100 & 80 & 51 \\
+69 & \fbox{72} & 74 & 32 & 82 & 31 \\
+34 & 95 & \fbox{61} & 64 & 100 & 82 \\
+\end{pmatrix}
+\quad
+\begin{pmatrix}
+62 & 31 & 79 & \fbox{6} & 21 & 37 \\
+45 & 27 & 23 & 66 & \fbox{9} & 17 \\
+83 & 59 & \fbox{25} & 38 & 63 & 25 \\
+\fbox{1} & 37 & 53 & 100 & 80 & 51 \\
+69 & 72 & 74 & 32 & 82 & \fbox{31} \\
+34 & \fbox{95} & 61 & 64 & 100 & 82 \\
+\end{pmatrix}
+\end{equation*}
+
+\paragraph{} One limitation of this approach, is that breaking ties for the minimum uncovered value can result in different costs as shown above. The lefthand assignment is $174$ by selecting $25$ at $(3, 6)$, whereas the righthand is $167$ by selecting the other $25$ at $(3, 3)$. The next progression in the design of the greedy algorithm would be to try all minimum positions and keep the top $k$ performing paths.
+
+\paragraph{Hungarian} The general idea behind the Kuhn-Munkres algorithm is that if we are given an initial assignment, we can make further assignments and potentially retask workers until all workers have been tasked with a job. The high level sketch of the algorithm starts with an initial assignment. While we have jobs that are unassigned, we then look at the jobs people are qualified to do, ie, the zero entries. If a worker is already assigned to a job, but is also qualified for another, then we prime that entry and continue to the next qualified worker, but if that is the only job they are qualified for, then we'd like to reassign other workers so that the job our qualified worker can be assigned a task. We do this reassignment by looking for an alternating path of starred and primed entries. In Munkres' paper \cite{munkres1957algorithms} "starred" zero's represent assignments of workers to jobs, and "primed" zero's are alternative assignments. By flipping the bits of the path, we retask workers to their alternative tasks while ensuring the assignment continues to be minimal by construction. After assigning as many workers as we can, we then deduct the lowest cost to create a new qualified worker. Thus, every iteration we are guaranteed to make positive progress towards our goal of finding an optimal assignment. The result is a polynomial time algorithm $\boundedBy{n^3}$ to an interesting combinatorial optimization problem.
+
+\begin{algorithm}
+\begin{algorithmic}
+\Procedure{HungarianMethod}{$M$} \Comment{$n \times n$ cost matrix}
+\State $M_{i,j} \gets M_{i,j} - \min_j M_{i,j}$ for $ i = 0 \ldots n - 1$
+\State $M_{i,j} \gets M_{i,j} - \min_i M_{i,j}$ for $ j = 0 \ldots n - 1$
+\State Star the first uncovered zero in row $i$, cover the corresponding column $j$ for $ i = 0 \ldots n - 1$
+
+\While{ All columns not covered }
+	\While{ Uncovered zeros }
+		\State Prime the current uncovered zero
+		\If{ There's a starred zero in this row }
+			\State Uncover the starred zero's column and cover the row
+		\Else
+			\State Find an alternating augmented path from the primed zero
+			\State Unstar the starred zeros on the path and star the primed zeros on the path
+			\State Remove all the prime markings and cover all stared zeros
+			\State \textbf{break}
+		\EndIf
+	\EndWhile
+
+	\If {Found path}
+		\State \textbf{continue}
+	\EndIf
+
+	\State $M^* = \min M_{i,j}$ over all uncovered $i, j$
+	\State $M_{i,j} = M_{i,j} - M^*$ for all uncovered columns $j$
+	\State $M_{i,j} = M_{i,j} + M^*$ for all covered rows $i$
+\EndWhile
+
+\State \textbf{return} Starred zeros \Comment{These are all the assignments}
+\EndProcedure
+\end{algorithmic}
+\caption{The Hungarian method for the LAP.}
+\label{alg:hungarian}
+\end{algorithm}
+
+To further illustrate the algorithm, consider the following example where starred entries are denoted by red, and primed entries by green:
+
+\resizebox{\linewidth}{!}{
+	\begin{tabular}{p{2.25in}p{2.25in}p{2.25in}}
+		\noindent \input{doc/hungarian-example.tex}
+	\end{tabular}
+}
+
+\section{Analysis}
+
+The prevailing convention in the literature is to look at the approximation factor, $\alpha$, to determine how well an approximation algorithm does to the optimal result. This ratio is the expected minimum cost assignment of the algorithm under test to the same quantity given by the Hungarian algorithm. Let $M_{i,j} \sim \exprv{1}$ be an $n \times n$ a standard exponential random cost matrix. We resort to the exponential distribution for its ease of analyis and prominence in related literature.
+
+\paragraph{Hungarian}
+
+The expected cost by the Hungarian method for $M$ is \cite{aldous2001zeta}:
+
+\begin{equation}
+	\expected{C_n} = \sum_{k = 1}^{n} \frac{1}{k^2} = H_{n}^{(2)}
+\end{equation}
+
+Which is the generalized Harmonic Number of order two and grows logarithmically.
+
+\paragraph{Greedy}
+
+The minimum value of an $n \times n$ matrix is given by the order statistic $M^{(n)}_{(1)} = \min \set{ M_{1,1} \ldots M_{n, n} }$ with expectation:
+
+\begin{equation}
+	\expected{ M^{(n)}_{(1)} } = \frac{1}{n^2}
+\end{equation}
+
+Following the greedy heuristic, the resulting assignment has a cost given by $C_n = \sum_{k=1}^{n} M^{(k)}_{(1)}$, and has expectation of:
+
+\begin{equation}
+	\expected{C_n} = \sum_{k = 1}^{n} \expected{ M^{(k)}_{(1)} } = \sum_{k = 1}^{n} \frac{1}{k^2} 
+\end{equation}
+
+TODO 
+
+\paragraph{Random}
+
+The random algorithm will simply select an assignment permutation, so we are just adding up $n$ $\exprv{1}$ distributed random variables leading to an expected cost of: 
+
+\begin{equation}
+	\expected{C_n} = \sum_{i=1}^n \expected{ M_{i, \pi_i} } = n
+\end{equation}
+
+And approximation factor compared to the Hungarian method:
+
+\begin{equation}
+	\alpha_n = \frac{n}{H_n^{(2)}}
+\end{equation}
 
 \section{Evaluation}
 
-\section{Conclusion}
+TODO present testing environment
+TODO compare empirical vs. theoretical and measure goodness of fit?
 
-\begin{figure}
+\begin{multicols}{2}
+\begin{figure}[H]
 	\centering
-	\input{obj/approximationFactor.tex}
-	\caption{Approximation factor}
+	\resizebox{\linewidth}{!}{\input{obj/approximationFactor.tex}}
+	\caption{Mean and 95\% confidence interval for the approximation factor of various algorithms to solver LAPs of varying sizes between $n \in [1, 1000]$.}
 	\label{fig:approximationFactor}
 \end{figure}
 
-\begin{figure}
+\columnbreak
+
+\begin{figure}[H]
 	\centering
-	\input{obj/runtime.tex}
-	\caption{Runtime}
+	\resizebox{\linewidth}{!}{\input{obj/runtime.tex}}
+	\caption{Mean and 95\% confidence interval for the elapsed wall time to solve LAPs of varying sizes between $n \in [1, 1000]$.}
 	\label{fig:runtime}
 \end{figure}
+\end{multicols}
+
+\section{Summary}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{l|c|c|c|c}
+& Brute & Random & Greedy & Hungarian \\
+\hline
+Complexity & $\boundedBy{n!}$ & $\boundedBy{n}$ & $\boundedBy{n^2 \log n}$ & $\boundedBy{n^3}$ \\
+$\alpha_n$ & 1 & $\frac{n}{H_n^{(2)}}$ & - & 1
+	\end{tabular}
+	\caption{Merits of each approach}
+\end{table}
+
+\bibliographystyle{acm}
+\bibliography{doc/references}
 
 \end{document}

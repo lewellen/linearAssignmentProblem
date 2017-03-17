@@ -1,8 +1,6 @@
 set xlabel 'Workers/Tasks, $n$'
 set ylabel 'Approximation Factor, $\alpha$'
 
-set logscale x
-
 set key bottom right
 
 set style fill solid 0.2

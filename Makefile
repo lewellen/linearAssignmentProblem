@@ -15,6 +15,9 @@ all: $(bins)
 
 bin/document.pdf: doc/document.tex $(figs) | bin
 	pdflatex --output-directory=bin doc/document.tex
+	bibtex bin/document.aux
+	pdflatex --output-directory=bin doc/document.tex
+	pdflatex --output-directory=bin doc/document.tex
 
 obj/%.tex: obj/%-summary.dat doc/%.gpi | obj
 	gnuplot -e "argInput='$<'; argOutput='$@'" $(word 2, $^)
