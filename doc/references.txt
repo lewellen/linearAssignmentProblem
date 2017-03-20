@@ -1,7 +1,11 @@
-The optimal assignment problem: an investigation into current solutions, new approaches and the doubly stochastic polytope. Frans-Willem Vermaak
+Kurtzberg - On approximation methods for the assignment problem
+http://web.eecs.umich.edu/~pettie/matching/Kurtzberg-approx-assignment-problem.pdfi
 
-http://wiredspace.wits.ac.za/bitstream/handle/10539/9894/The%20Optimal%20Assignment%20Problem_An%20Investigation%20Into%20Current%20Solutions,%20New%20Approaches%20and%20the%20Do.pdf?sequence=3
+Steele - Probability and statistics in the service of computer science: illustration using the assignment problem
+http://www-stat.wharton.upenn.edu/~steele/Publications/PDF/PaSitS.pdf
 
+Aldous - The zeta(2) limit in the radom assignment problem
+https://arxiv.org/pdf/math/0010063.pdf
 
- http://shodhganga.inflibnet.ac.in/bitstream/10603/3970/10/10_chapter%205.pdf
-
+parisi - A conjecture on radom bipartite matching
+https://arxiv.org/pdf/cond-mat/9801176.pdf
