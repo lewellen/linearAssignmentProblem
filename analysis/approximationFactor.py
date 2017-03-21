@@ -68,13 +68,15 @@ if __name__ == '__main__':
 		print size,
 		for solver in solvers:
 			xs = numpy.array( alphaBySizeSolver[size][solver] )
-
+			
 			sampleMean = numpy.mean(xs)
 			if solver == greedyTheory:
 				print("%f 0.0 0.0" % (sampleMean)),
 			else:
+				xs = sorted(xs)
+				xs = xs[0:int(0.95 * len(xs))]
 				sampleStd = numpy.std(xs)
 				confInt = stats.norm.interval(0.95, sampleMean, sampleStd)
-				print("%f %f %f" % (sampleMean, confInt[0], confInt[1])),
+				print("%f %f %f" % (sampleMean, max(0, confInt[0]), max(0, confInt[1]))),
 
 		print("")

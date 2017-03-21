@@ -26,11 +26,11 @@
 
 \begin{tikzpicture}
 \matrix (M)[matrix of math nodes, column sep=-\pgflinewidth, row sep=-\pgflinewidth, left delimiter={(}, right delimiter={)}, nodes={anchor=center, align=center, minimum height=0.55cm, text width=0.55cm}] {
-58 & 25 & 24 & \textcolor{red}{\textbf{0}} & \textbf{0} & 21 \\
-\textcolor{red}{\textbf{0}} & 60 & 13 & 42 & 11 & 64 \\
-31 & 19 & 43 & 25 & 7 & \textcolor{red}{\textbf{0}} \\
+58 & 25 & 24 & \textcolor{red}{\textbf{0}^{\star}} & \textbf{0} & 21 \\
+\textcolor{red}{\textbf{0}^{\star}} & 60 & 13 & 42 & 11 & 64 \\
+31 & 19 & 43 & 25 & 7 & \textcolor{red}{\textbf{0}^{\star}} \\
 61 & 83 & 46 & \textbf{0} & 28 & 73 \\
-5 & \textcolor{red}{\textbf{0}} & \textbf{0} & 40 & 2 & 10 \\
+5 & \textcolor{red}{\textbf{0}^{\star}} & \textbf{0} & 40 & 2 & 10 \\
 \textbf{0} & 29 & 64 & 88 & 53 & 13 \\
 };
 \draw[black] (M-1-1.north) -- (M-6-1.south);
@@ -55,11 +55,11 @@ Cover columns of starred entries
 
 \begin{tikzpicture}
 \matrix (M)[matrix of math nodes, column sep=-\pgflinewidth, row sep=-\pgflinewidth, left delimiter={(}, right delimiter={)}, nodes={anchor=center, align=center, minimum height=0.55cm, text width=0.55cm}] {
-58 & 25 & 24 & \textcolor{red}{\textbf{0}} & \textcolor{green}{\textbf{0}} & 21 \\
-\textcolor{red}{\textbf{0}} & 60 & 13 & 42 & 11 & 64 \\
-31 & 19 & 43 & 25 & 7 & \textcolor{red}{\textbf{0}} \\
+58 & 25 & 24 & \textcolor{red}{\textbf{0}^{\star}} & \textcolor{green}{\textbf{0}^{\prime}} & 21 \\
+\textcolor{red}{\textbf{0}^{\star}} & 60 & 13 & 42 & 11 & 64 \\
+31 & 19 & 43 & 25 & 7 & \textcolor{red}{\textbf{0}^{\star}} \\
 61 & 83 & 46 & \textbf{0} & 28 & 73 \\
-5 & \textcolor{red}{\textbf{0}} & \textbf{0} & 40 & 2 & 10 \\
+5 & \textcolor{red}{\textbf{0}^{\star}} & \textbf{0} & 40 & 2 & 10 \\
 \textbf{0} & 29 & 64 & 88 & 53 & 13 \\
 };
 \draw[black] (M-1-1.west) -- (M-1-6.east);
@@ -72,11 +72,11 @@ Cover columns of starred entries
 
 \begin{tikzpicture}
 \matrix (M)[matrix of math nodes, column sep=-\pgflinewidth, row sep=-\pgflinewidth, left delimiter={(}, right delimiter={)}, nodes={anchor=center, align=center, minimum height=0.55cm, text width=0.55cm}] {
-58 & 25 & 24 & \textcolor{red}{\textbf{0}} & \textcolor{green}{\textbf{0}} & 21 \\
-\textcolor{red}{\textbf{0}} & 60 & 13 & 42 & 11 & 64 \\
-31 & 19 & 43 & 25 & 7 & \textcolor{red}{\textbf{0}} \\
-61 & 83 & 46 & \textcolor{green}{\textbf{0}} & 28 & 73 \\
-5 & \textcolor{red}{\textbf{0}} & \textbf{0} & 40 & 2 & 10 \\
+58 & 25 & 24 & \textcolor{red}{\textbf{0}^{\star}} & \textcolor{green}{\textbf{0}^{\prime}} & 21 \\
+\textcolor{red}{\textbf{0}^{\star}} & 60 & 13 & 42 & 11 & 64 \\
+31 & 19 & 43 & 25 & 7 & \textcolor{red}{\textbf{0}^{\star}} \\
+61 & 83 & 46 & \textcolor{green}{\textbf{0}^{\prime}} & 28 & 73 \\
+5 & \textcolor{red}{\textbf{0}^{\star}} & \textbf{0} & 40 & 2 & 10 \\
 \textbf{0} & 29 & 64 & 88 & 53 & 13 \\
 };
 \draw[black] (M-1-1.west) -- (M-1-6.east);
@@ -91,11 +91,11 @@ Cover columns of starred entries
 
 \begin{tikzpicture}
 \matrix (M)[matrix of math nodes, column sep=-\pgflinewidth, row sep=-\pgflinewidth, left delimiter={(}, right delimiter={)}, nodes={anchor=center, align=center, minimum height=0.55cm, text width=0.55cm}] {
-58 & 25 & 24 & \textbf{0} & \textcolor{red}{\textbf{0}} & 21 \\
-\textcolor{red}{\textbf{0}} & 60 & 13 & 42 & 11 & 64 \\
-31 & 19 & 43 & 25 & 7 & \textcolor{red}{\textbf{0}} \\
-61 & 83 & 46 & \textcolor{red}{\textbf{0}} & 28 & 73 \\
-5 & \textcolor{red}{\textbf{0}} & \textbf{0} & 40 & 2 & 10 \\
+58 & 25 & 24 & \textbf{0} & \textcolor{red}{\textbf{0}^{\star}} & 21 \\
+\textcolor{red}{\textbf{0}^{\star}} & 60 & 13 & 42 & 11 & 64 \\
+31 & 19 & 43 & 25 & 7 & \textcolor{red}{\textbf{0}^{\star}} \\
+61 & 83 & 46 & \textcolor{red}{\textbf{0}^{\star}} & 28 & 73 \\
+5 & \textcolor{red}{\textbf{0}^{\star}} & \textbf{0} & 40 & 2 & 10 \\
 \textbf{0} & 29 & 64 & 88 & 53 & 13 \\
 };
 \draw[black] (M-1-1.north) -- (M-6-1.south);
@@ -121,11 +121,11 @@ Unstar starred entries and star prime entries along path
 
 \begin{tikzpicture}
 \matrix (M)[matrix of math nodes, column sep=-\pgflinewidth, row sep=-\pgflinewidth, left delimiter={(}, right delimiter={)}, nodes={anchor=center, align=center, minimum height=0.55cm, text width=0.55cm}] {
-58 & 25 & 24 & \textbf{0} & \textcolor{red}{\textbf{0}} & 21 \\
-\textcolor{red}{\textbf{0}} & 60 & 13 & 42 & 11 & 64 \\
-31 & 19 & 43 & 25 & 7 & \textcolor{red}{\textbf{0}} \\
-61 & 83 & 46 & \textcolor{red}{\textbf{0}} & 28 & 73 \\
-5 & \textcolor{red}{\textbf{0}} & \textcolor{green}{\textbf{0}} & 40 & 2 & 10 \\
+58 & 25 & 24 & \textbf{0} & \textcolor{red}{\textbf{0}^{\star}} & 21 \\
+\textcolor{red}{\textbf{0}^{\star}} & 60 & 13 & 42 & 11 & 64 \\
+31 & 19 & 43 & 25 & 7 & \textcolor{red}{\textbf{0}^{\star}} \\
+61 & 83 & 46 & \textcolor{red}{\textbf{0}^{\star}} & 28 & 73 \\
+5 & \textcolor{red}{\textbf{0}^{\star}} & \textcolor{green}{\textbf{0}^{\prime}} & 40 & 2 & 10 \\
 \textbf{0} & 29 & 64 & 88 & 53 & 13 \\
 };
 \draw[black] (M-5-1.west) -- (M-5-6.east);
@@ -139,11 +139,11 @@ Unstar starred entries and star prime entries along path
 
 \begin{tikzpicture}
 \matrix (M)[matrix of math nodes, column sep=-\pgflinewidth, row sep=-\pgflinewidth, left delimiter={(}, right delimiter={)}, nodes={anchor=center, align=center, minimum height=0.55cm, text width=0.55cm}] {
-58 & 12 & 11 & \textbf{0} & \textcolor{red}{\textbf{0}} & 21 \\
-\textcolor{red}{\textbf{0}} & 47 & \textbf{0} & 42 & 11 & 64 \\
-31 & 6 & 30 & 25 & 7 & \textcolor{red}{\textbf{0}} \\
-61 & 70 & 33 & \textcolor{red}{\textbf{0}} & 28 & 73 \\
-18 & \textcolor{red}{\textbf{0}} & \textcolor{green}{\textbf{0}} & 53 & 15 & 23 \\
+58 & 12 & 11 & \textbf{0} & \textcolor{red}{\textbf{0}^{\star}} & 21 \\
+\textcolor{red}{\textbf{0}^{\star}} & 47 & \textbf{0} & 42 & 11 & 64 \\
+31 & 6 & 30 & 25 & 7 & \textcolor{red}{\textbf{0}^{\star}} \\
+61 & 70 & 33 & \textcolor{red}{\textbf{0}^{\star}} & 28 & 73 \\
+18 & \textcolor{red}{\textbf{0}^{\star}} & \textcolor{green}{\textbf{0}^{\prime}} & 53 & 15 & 23 \\
 \textbf{0} & 16 & 51 & 88 & 53 & 13 \\
 };
 \draw[black] (M-5-1.west) -- (M-5-6.east);
@@ -157,11 +157,11 @@ Unstar starred entries and star prime entries along path
 
 \begin{tikzpicture}
 \matrix (M)[matrix of math nodes, column sep=-\pgflinewidth, row sep=-\pgflinewidth, left delimiter={(}, right delimiter={)}, nodes={anchor=center, align=center, minimum height=0.55cm, text width=0.55cm}] {
-58 & 12 & 11 & \textbf{0} & \textcolor{red}{\textbf{0}} & 21 \\
-\textcolor{red}{\textbf{0}} & 47 & \textcolor{green}{\textbf{0}} & 42 & 11 & 64 \\
-31 & 6 & 30 & 25 & 7 & \textcolor{red}{\textbf{0}} \\
-61 & 70 & 33 & \textcolor{red}{\textbf{0}} & 28 & 73 \\
-18 & \textcolor{red}{\textbf{0}} & \textcolor{green}{\textbf{0}} & 53 & 15 & 23 \\
+58 & 12 & 11 & \textbf{0} & \textcolor{red}{\textbf{0}^{\star}} & 21 \\
+\textcolor{red}{\textbf{0}^{\star}} & 47 & \textcolor{green}{\textbf{0}^{\prime}} & 42 & 11 & 64 \\
+31 & 6 & 30 & 25 & 7 & \textcolor{red}{\textbf{0}^{\star}} \\
+61 & 70 & 33 & \textcolor{red}{\textbf{0}^{\star}} & 28 & 73 \\
+18 & \textcolor{red}{\textbf{0}^{\star}} & \textcolor{green}{\textbf{0}^{\prime}} & 53 & 15 & 23 \\
 \textbf{0} & 16 & 51 & 88 & 53 & 13 \\
 };
 \draw[black] (M-2-1.west) -- (M-2-6.east);
@@ -187,12 +187,12 @@ Starred zero at $(2, 1)$, prime $(2, 3)$
 
 \begin{tikzpicture}
 \matrix (M)[matrix of math nodes, column sep=-\pgflinewidth, row sep=-\pgflinewidth, left delimiter={(}, right delimiter={)}, nodes={anchor=center, align=center, minimum height=0.55cm, text width=0.55cm}] {
-58 & 12 & 11 & \textbf{0} & \textcolor{red}{\textbf{0}} & 21 \\
-\textcolor{red}{\textbf{0}} & 47 & \textcolor{green}{\textbf{0}} & 42 & 11 & 64 \\
-31 & 6 & 30 & 25 & 7 & \textcolor{red}{\textbf{0}} \\
-61 & 70 & 33 & \textcolor{red}{\textbf{0}} & 28 & 73 \\
-18 & \textcolor{red}{\textbf{0}} & \textcolor{green}{\textbf{0}} & 53 & 15 & 23 \\
-\textcolor{green}{\textbf{0}} & 16 & 51 & 88 & 53 & 13 \\
+58 & 12 & 11 & \textbf{0} & \textcolor{red}{\textbf{0}^{\star}} & 21 \\
+\textcolor{red}{\textbf{0}^{\star}} & 47 & \textcolor{green}{\textbf{0}^{\prime}} & 42 & 11 & 64 \\
+31 & 6 & 30 & 25 & 7 & \textcolor{red}{\textbf{0}^{\star}} \\
+61 & 70 & 33 & \textcolor{red}{\textbf{0}^{\star}} & 28 & 73 \\
+18 & \textcolor{red}{\textbf{0}^{\star}} & \textcolor{green}{\textbf{0}^{\prime}} & 53 & 15 & 23 \\
+\textcolor{green}{\textbf{0}^{\prime}} & 16 & 51 & 88 & 53 & 13 \\
 };
 \draw[black] (M-2-1.west) -- (M-2-6.east);
 \draw[black] (M-5-1.west) -- (M-5-6.east);
@@ -207,12 +207,12 @@ Starred zero at $(2, 1)$, prime $(2, 3)$
 
 \begin{tikzpicture}
 \matrix (M)[matrix of math nodes, column sep=-\pgflinewidth, row sep=-\pgflinewidth, left delimiter={(}, right delimiter={)}, nodes={anchor=center, align=center, minimum height=0.55cm, text width=0.55cm}] {
-58 & 12 & 11 & \textbf{0} & \textcolor{red}{\textbf{0}} & 21 \\
-\textbf{0} & 47 & \textcolor{red}{\textbf{0}} & 42 & 11 & 64 \\
-31 & 6 & 30 & 25 & 7 & \textcolor{red}{\textbf{0}} \\
-61 & 70 & 33 & \textcolor{red}{\textbf{0}} & 28 & 73 \\
-18 & \textcolor{red}{\textbf{0}} & \textbf{0} & 53 & 15 & 23 \\
-\textcolor{red}{\textbf{0}} & 16 & 51 & 88 & 53 & 13 \\
+58 & 12 & 11 & \textbf{0} & \textcolor{red}{\textbf{0}^{\star}} & 21 \\
+\textbf{0} & 47 & \textcolor{red}{\textbf{0}^{\star}} & 42 & 11 & 64 \\
+31 & 6 & 30 & 25 & 7 & \textcolor{red}{\textbf{0}^{\star}} \\
+61 & 70 & 33 & \textcolor{red}{\textbf{0}^{\star}} & 28 & 73 \\
+18 & \textcolor{red}{\textbf{0}^{\star}} & \textbf{0} & 53 & 15 & 23 \\
+\textcolor{red}{\textbf{0}^{\star}} & 16 & 51 & 88 & 53 & 13 \\
 };
 \draw[black] (M-1-1.north) -- (M-6-1.south);
 \draw[black] (M-1-2.north) -- (M-6-2.south);

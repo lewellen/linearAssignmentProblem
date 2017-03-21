@@ -10,6 +10,9 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{multicol}
+\usepackage [english]{babel}
+\usepackage [autostyle, english = american]{csquotes}
+\MakeOuterQuote{"}
 
 \newgeometry{margin=1.25in}
 
@@ -42,7 +45,7 @@ The Linear Assignment Problem (LAP) is concerned with uniquely matching an equal
 \end{aligned}
 \end{equation}
 
-The LAP is given by the above linear program where $M \in \mathbb{Z}_{+}^{n \times n}$ cost matrix, and $x \in \lbrace 0,1 \rbrace^{n \times n}$ assignment matrix. This is equivalent to finding a perfect matching in a weighted bipartite graph. A minimal cost may have several possible assignments, but we are only interested in finding just one. It is assumed that no one worker can do all jobs more efficiently by themself than the distributing work across all workers. Likewise, if the costs are thought of durations, then the minimum cost is the minimum sequential rather than parallel time taken to complete the tasks.
+The above linear program has cost, $M \in \mathbb{Z}_{+}^{n \times n}$, and assignment, $x \in \lbrace 0,1 \rbrace^{n \times n}$, matrices that specify the terms of the LAP. This is equivalent to finding a perfect matching in a weighted bipartite graph. A minimal cost may have several possible assignments, but we are only interested in finding just one. It is assumed that no one worker can do all jobs more efficiently by themself than the distributing work across all workers. Likewise, if the costs are thought of durations, then the minimum cost is the minimum sequential rather than parallel time taken to complete the tasks.
 
 From a practical point of view, we may relax the integral constraint on $M$ and allow all positive real-valued costs. For instances where there are more jobs than workers, and vice versa, dummy entries valued greater than the existing maximum may be added. Minimizing the cost is the default objective, but the maximum cost can be found by finding the optimal assignment for $M^{\prime}_{i,j} = M_{max} - M_{i,j}$, then finding the cost relative to $M$. 
 
@@ -86,7 +89,7 @@ The greedy heuristic continues to cover the row and column of the smallest uncov
 \label{alg:greedy}
 \end{algorithm}
 
-\paragraph{} Allocating and linking for assignment is $\boundedBy{n}$; mesh $\boundedBy{n^2}$; queue $\boundedBy{2n^2\log n + n^2}$. Therefore, initialization requires $\boundedBy{n^2 \log n}$ time. The body of the loop requires a constant time assignment of worker to job, and $\boundedBy{2k - 1}$ time to remove the row and column from a $k \times k$ matrix using a modified depth first search. Thus the loop itself accounts for $\boundedBy{n^2}$ time. The resulting time complexity is therefore $\boundedBy{n^2 \log n} \square$.
+\paragraph{} Allocating and linking for assignment is $\boundedBy{n}$; mesh $\boundedBy{n^2}$; queue $\boundedBy{2n^2\log n + n^2}$. Therefore, initialization requires $\boundedBy{n^2 \log n}$ time. The body of the loop requires a constant time assignment of worker to job, and $\boundedBy{2k - 1}$ time to remove the row and column from a $k \times k$ matrix using a modified depth first search. Thus, the loop itself accounts for $\boundedBy{n^2}$ time. The resulting time complexity is therefore $\boundedBy{n^2 \log n} \square$.
 
 \begin{equation*}
 \quad
@@ -111,7 +114,7 @@ The greedy heuristic continues to cover the row and column of the smallest uncov
 
 \paragraph{} Breaking ties for the minimum uncovered value can result in different costs. This drawback is shown in the above example were choosing $25$ at $(3,6)$ yields a minimum cost of $174$, where as the one at $(3, 3)$ gives a minimum cost of $167$. The next progression in the design of the greedy algorithm would be to try all minimum positions and keep the top $k$ performing paths.
 
-\paragraph{Hungarian} The general idea behind the Kuhn-Munkres algorithm is that if we are given an initial assignment, we can make further assignments and potentially retask workers until all workers have been tasked with a job. The high level sketch of the algorithm starts with an initial assignment. While we have jobs that are unassigned, we look for qualified workers, ie, the zero entries. If a worker is already assigned to a job, but is also qualified for another, then we prime the alternative and continue to the next qualified worker, but if that is the only job the worker is qualified for, then we'd like to reassign any other worker already tasked to that job. This leads to a natural ripple effect represented by an alternating path of starred and primed entries. In Munkres' paper \cite{munkres1957algorithms} "starred" zero's represent assignments of workers to jobs, and "primed" zero's are alternative assignments. By flipping the bits of the path, we retask workers to their alternative tasks while ensuring the assignment continues to be minimal by construction. After assigning as many workers as we have to, we then deduct the lowest cost to create a new qualified worker. Thus, every iteration we are guaranteed to make positive progress towards our goal of finding an optimal assignment. This scheme results requires in the worst case $\boundedBy{n^3}$ time to complete.
+\paragraph{Hungarian} The general idea behind the Kuhn-Munkres algorithm is that if we are given an initial assignment, we can make further assignments and potentially retask workers until all workers have been tasked with a job. The high-level sketch of the algorithm starts with an initial assignment. While we have jobs that are unassigned, we look for qualified workers, ie, the zero entries. If a worker is already assigned to a job, but is also qualified for another, then we prime the alternative and continue to the next qualified worker, but if that is the only job the worker is qualified for, then we'd like to reassign any other worker already tasked to that job. This leads to a natural ripple effect represented by an alternating path of starred and primed entries. In Munkres' paper \cite{munkres1957algorithms} "starred" zero's represent assignments of workers to jobs, and "primed" zero's are alternative assignments. By flipping the bits of the path, we retask workers to their alternative tasks while ensuring the assignment continues to be minimal by construction. After assigning as many workers as we have to, we then deduct the lowest cost to create a new qualified worker. Thus, every iteration we are guaranteed to make positive progress towards our goal of finding an optimal assignment. This scheme results in the worst case $\boundedBy{n^3}$ time to complete.
 
 \begin{algorithm}
 \begin{algorithmic}
@@ -159,11 +162,11 @@ To further illustrate the algorithm, consider the following example where starre
 
 \section{Analysis}
 
-The prevailing convention in the literature is to look at the approximation factor, $\alpha$, to determine how close the results of an approximation algorithm are to optimal. Here this ratio is the expected minimum cost assignment of the algorithm under test to the same quantity given by the expected minimum assignment cost. Let $M_{i,j} \sim \exprv{1}$ be an $n \times n$ a standard exponential random cost matrix. We resort to the exponential distribution for its ease of analyis and prominence in related literature. Cf. the works of \cite{kurtzberg1962approximation}, \cite{michael1990probability} for analysis based on $M_{i,j} \sim \mathcal{U}(0,1)$.
+The prevailing convention in the literature is to look at the approximation factor, $\alpha$, to determine how close the results of an approximation algorithm are to optimal \cite{williamson2011design}. Here this ratio is the expected minimum cost assignment of the algorithm under test to the same quantity given by the expected minimum assignment cost. Let $M_{i,j} \sim \exprv{1}$ be an $n \times n$ a standard exponential random cost matrix. We resort to the exponential distribution for its ease of analyis and prominence in related literature. Cf. the works of \cite{kurtzberg1962approximation}, \cite{michael1990probability} for analysis based on $M_{i,j} \sim \mathcal{U}(0,1)$.
 
 \paragraph{Exponential Distribution Properties}
 
-Let $X \sim \exprv{\lambda}$ have cumulative distribution function $F_X(x) = 1 - \exp{\left(-\lambda x\right)}$ and expectation $\expected{X} = \lambda^{-}$. Define the order statistic $X_{1:n} = \min \lbrace X_{1}, \ldots, X_{n} \rbrace $ to be the minimum of $n$ draws from $\exprv{\lambda}$. $X_{1:n} \sim \exprv{n \lambda}$ \cite{balakrishnan2000handbook} with expectation $\expected{X_{1:n}} = \left(n \lambda\right)^-$. Let $Y_n = \sum_{i = 1}^{n} X_i \sim \text{Gamma}(n, \lambda)$ with expectation $\expected{Y_n} = n \lambda^{-}$.
+Let $X \sim \exprv{\lambda}$ have cumulative distribution function $F_X(x) = 1 - \exp{\left(-\lambda x\right)}$ and expectation $\expected{X} = \lambda^{-}$. The distribution demonstrates the memoryless property for expectations $\expected{X \lvert X > a} = \expected{X} + a$. Define the order statistic $X_{1:n} = \min \lbrace X_{1}, \ldots, X_{n} \rbrace $ to be the minimum of $n$ draws from $\exprv{\lambda}$. $X_{1:n} \sim \exprv{n \lambda}$ \cite{balakrishnan2000handbook} with expectation $\expected{X_{1:n}} = \left(n \lambda\right)^-$. If $Y_n = \sum_{i = 1}^{n} X_i$ then $Y_n \sim \text{Gamma}(n, \lambda)$ with expectation $\expected{Y_n} = n \lambda^{-}$.
 
 \paragraph{Expected Minimum Cost}
 
@@ -173,17 +176,17 @@ The expected minimum assignment cost for $M$ is given by \cite{aldous2001zeta}:
 	\expected{C_n} = \sum_{k = 1}^{n} \frac{1}{k^2} = H_{n}^{(2)}
 \end{equation}
 
-Which is the generalized Harmonic Number of order two and converges to $\zeta(2) = \pi^2/6$.
+Which is the generalized harmonic number of order two and converges to $\zeta(2) = \pi^2/6$. For the generalized harmonic numbers, $H_{n}^{(k)}$, $\lim_{k\to\infty} H_{n}^{(k)} = \zeta(k)$ for $k > 1$.
 
 \paragraph{Greedy}
 
-The minimum value of an $n \times n$ matrix is given by the order statistic $M^{1:n^2} = \min \set{ M_{1,1} \ldots M_{n, n} }$ with expectation $\expected{ M_{1:n^2} } = n^{-2}$. The expected value of the minimum cost assignment is not just $\sum_{i=0}^{n-1} (n-i)^2$ because the expectation doesn't take into account the previous iteration's minimum value. To accomplish this we make use of the memoryless property of the exponential distribution to observe that the expected difference in minimums betweens iterations is the expected minimum value given by $M_{i:k^2}$. If we add up all these differences we get the expected minimum value of the k'th iteration; summing all these expectations then yields the expected minimum cost assignment:
+The minimum value of an $n \times n$ matrix is given by the order statistic $M_{1:n^2}$ with expectation $\expected{ M_{1:n^2} } = n^{-2}$. The expected value of the minimum cost assignment is not just $\sum_{i=0}^{n-1} (n-i)^{-2}$ because the expectation doesn't take into account the previous iteration's minimum value. To accomplish this we make use of the memoryless property of the exponential distribution to observe that the expected difference in minimums betweens iterations is the expected minimum value given by $M_{i:k^2}$. If we add up all these differences we get the expected minimum value of the k'th iteration; summing all these expectations then yields the expected minimum cost assignment:
 
 \begin{equation}
 	\expected{C_n} = \sum_{i=0}^{n-1} \sum_{j=0}^{i} \frac{1}{(n - j)^2} = \sum_{j=0}^{n-1} \frac{(n-j)}{(n-j)^2} = \sum_{j=0}^{n-1} \frac{1}{n-j} = H_n
 \end{equation}
 
-This is the Harmonic Number of order one which does not converge. The resulting approximation factor is:
+This is the harmonic number of order one which does not converge. The resulting approximation factor is:
 
 \begin{equation}
 	\alpha_n = \frac{H_n}{H_n^{(2)}}
@@ -203,9 +206,10 @@ And approximation factor:
 	\alpha_n = \frac{n}{H_n^{(2)}}
 \end{equation}
 
-\section{Evaluation}
+From this analysis one concludes that the greedy algorithm has an unbounded approximation factor that grows signifigantly slower than that of randomly selecting assignments.
 
-To illustrate the preceeding results, Figure \ref{fig:approximationFactor} shows the approximation factor for the greedy algorithm implementations against the derived approximation factor. The simulated results are based on 120 $n times n$ standard exponentially distributed matrices for $1 \le n \le 1000$. 
+\newpage
+\section{Evaluation}
 
 \begin{multicols}{2}
 \begin{figure}[H]
@@ -225,22 +229,35 @@ To illustrate the preceeding results, Figure \ref{fig:approximationFactor} shows
 \end{figure}
 \end{multicols}
 
-Using the same conventions for the approximation factor, Figure \ref{fig:runtime} illustrates the runtime characteristics of the algorithms. Results obtained from source code compiled with -O3 flags and ran on a Xeon E3-1245 v5 3.4 Ghz system with 32 GBs of 2133Mhz DDR4 RAM. Ignoring constant factors, the algorithms coincide with the theoretical expectations.
+To illustrate the preceeding results, Figure \ref{fig:approximationFactor} shows the approximation factor for the greedy algorithm implementations against the derived approximation factor. The simulated results are based on 120 $n \times n$ standard exponentially distributed matrices for $1 \le n \le 1000$. Using the same conventions for the approximation factor, Figure \ref{fig:runtime} illustrates the runtime characteristics of the algorithms after rejecting outliers due to system fluctuations. Results obtained from source code compiled with -O3 flags and ran on a Xeon E3-1245 v5 3.5 Ghz system with 32 GBs of 2133Mhz DDR4 RAM. The algorithms coincide with the theoretical time complexities as shown in Table \ref{tbl:runtime:mse}.
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{l|c}
+		Solver & MSE \\
+		\hline
+		GREEDY-EFFICIENT & 0.002139 \\
+		GREEDY-NAIVE & 0.014161 \\
+		HUNGARIAN & 0.232998
+	\end{tabular}
+	\caption{Mean square error of fitted model to mean runtime for each solver. Models given by the corresponding time complexity. Fit by Levenberg-Marquardt.}
+	\label{tbl:runtime:mse}
+\end{table}
 
 \section{Summary}
 
 \begin{table}[H]
 	\centering
 	\begin{tabular}{l|c|c|c|c}
-& Brute & Random & Greedy & Hungarian \\
-\hline
-Complexity & $\boundedBy{n!}$ & $\boundedBy{n}$ & $\boundedBy{n^2 \log n}$ & $\boundedBy{n^3}$ \\
-$\alpha_n$ & 1 & $\frac{n}{H_n^{(2)}}$ & $\frac{H_n}{H_n^{(2)}}$ & 1
+		& Brute & Random & Greedy & Hungarian \\
+		\hline
+		Complexity & $\boundedBy{n!}$ & $\boundedBy{n}$ & $\boundedBy{n^2 \log n}$ & $\boundedBy{n^3}$ \\
+		$\alpha_n$ & 1 & $n / H_n^{(2)}$ & $H_n / H_n^{(2)}$ & 1
 	\end{tabular}
 	\caption{Merits of each approach}
 \end{table}
 
-For exact solutions, the brute method is suitable for instances involving a handful of workers, but the Hungarian method is suitable for all other instances. Approximate solutions can be provided by the greedy algorithm with logarithmic degeneracy while providing a linear factor improvement over the Hungarian method.
+Exact solutions can be delivered by the brute method when a handful of workers are being considered, and the Hungarian method should be considered for all other instances. Approximate solutions can be provided by the greedy algorithm with logarithmic degeneracy while providing a linear factor improvement over the Hungarian method. For inputs greater than those considered, the parallel Auction algorithm \cite{bertsekas1988auction} is a suitable alternative and the subject of future work.
 
 \bibliographystyle{acm}
 \bibliography{doc/references}

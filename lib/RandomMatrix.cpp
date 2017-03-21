@@ -14,8 +14,7 @@ RandomMatrix::RandomMatrix(size_t rows, size_t cols) : Array2D<double>(rows, col
 			
 			double u = rand() / (double) RAND_MAX;
 			double e = - log(1-u);
-			getEntry(row, col) = e;
-				
+			getEntry(row, col) = e;				
 		}
 	}
 }
